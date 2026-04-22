@@ -1,18 +1,22 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
-export const adminAuth = (req,res,next)=>{ 
- try{
-    const token = req.headers
-    if(!token){
-        return res.status(401).json({success:false,message:"Unauthorized user"})
+export const adminAuth = (req, res, next) => {
+  try {
+    console.log("HEADERS:", req.headers);
+
+    const token = req.headers.token;
+    console.log("TOKEN RECEIVED:", token);
+
+    if (!token) {
+      return res.status(401).json({ success: false, message: "No token" });
     }
-    const token_decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if(token_decoded !== process.env.ADMIN_EMAIL + process.env.ADMIN_PASSWORD){
-        return res.status(401).json({success:false,message:"Unauthorized user"})
-    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("DECODED:", decoded);
+
     next();
-}catch(error){
-    console.log(error)
-    res.status(401).json({success:false,message:"Unauthorized user"})   
-}
-}
+  } catch (err) {
+    console.log("JWT ERROR:", err.message);
+    res.status(401).json({ success: false, message: "Invalid token" });
+  }
+};

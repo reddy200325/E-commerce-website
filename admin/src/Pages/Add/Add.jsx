@@ -4,14 +4,14 @@ import axios from "axios";
 import { backendurl } from "../../App";
 import { toast } from "react-toastify";
 
-const Add = ({ token }) => {
-  // ✅ Image states
+const Add = () => {
+  // Images
   const [image1, setImage1] = useState(null);
   const [image2, setImage2] = useState(null);
   const [image3, setImage3] = useState(null);
   const [image4, setImage4] = useState(null);
 
-  // ✅ Other states
+  // Fields
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("Men");
@@ -19,11 +19,11 @@ const Add = ({ token }) => {
   const [bestSeller, setBestSeller] = useState(false);
   const [sizes, setSizes] = useState([]);
 
-  // ✅ Preview helper
+  // Preview image
   const preview = (file) =>
     file ? URL.createObjectURL(file) : upload_img;
 
-  // ✅ Size toggle
+  // Toggle sizes
   const toggleSize = (size) => {
     setSizes((prev) =>
       prev.includes(size)
@@ -32,7 +32,7 @@ const Add = ({ token }) => {
     );
   };
 
-  // ✅ Submit
+  // Submit handler
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
@@ -43,7 +43,7 @@ const Add = ({ token }) => {
       formData.append("description", description);
       formData.append("category", category);
       formData.append("price", price);
-      formData.append("bestSeller", bestSeller);
+      formData.append("bestSeller", bestSeller ? "true" : "false");
       formData.append("sizes", JSON.stringify(sizes));
 
       if (image1) formData.append("image1", image1);
@@ -51,12 +51,16 @@ const Add = ({ token }) => {
       if (image3) formData.append("image3", image3);
       if (image4) formData.append("image4", image4);
 
+      const token = localStorage.getItem("token");
+
+      console.log("TOKEN:", token);
+
       const response = await axios.post(
         backendurl + "/api/product/add",
         formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            token: token,
           },
         }
       );
@@ -64,7 +68,7 @@ const Add = ({ token }) => {
       if (response.data.success) {
         toast.success(response.data.message);
 
-        // 🔄 Reset form
+        // Reset form
         setName("");
         setDescription("");
         setPrice("");
@@ -89,7 +93,7 @@ const Add = ({ token }) => {
       onSubmit={onSubmitHandler}
       className="flex flex-col gap-5 p-5 w-full max-w-2xl"
     >
-      {/* 🔹 Images */}
+      {/* Images */}
       <div>
         <p className="mb-2 font-semibold">Upload Images</p>
         <div className="flex gap-3 flex-wrap">
@@ -116,7 +120,7 @@ const Add = ({ token }) => {
         </div>
       </div>
 
-      {/* 🔹 Name */}
+      {/* Name */}
       <input
         type="text"
         placeholder="Product Name"
@@ -126,7 +130,7 @@ const Add = ({ token }) => {
         required
       />
 
-      {/* 🔹 Description */}
+      {/* Description */}
       <textarea
         placeholder="Product Description"
         value={description}
@@ -135,7 +139,7 @@ const Add = ({ token }) => {
         required
       />
 
-      {/* 🔹 Category */}
+      {/* Category */}
       <select
         value={category}
         onChange={(e) => setCategory(e.target.value)}
@@ -146,7 +150,7 @@ const Add = ({ token }) => {
         <option value="Kids">Kids</option>
       </select>
 
-      {/* 🔹 Price */}
+      {/* Price */}
       <input
         type="number"
         placeholder="Price"
@@ -156,7 +160,7 @@ const Add = ({ token }) => {
         required
       />
 
-      {/* 🔹 Sizes */}
+      {/* Sizes */}
       <div>
         <p className="mb-2 font-semibold">Sizes</p>
         <div className="flex gap-2 flex-wrap">
@@ -176,7 +180,7 @@ const Add = ({ token }) => {
         </div>
       </div>
 
-      {/* 🔹 Bestseller */}
+      {/* Bestseller */}
       <div className="flex items-center gap-2">
         <input
           type="checkbox"
@@ -186,7 +190,7 @@ const Add = ({ token }) => {
         <label>Bestseller</label>
       </div>
 
-      {/* 🔹 Submit */}
+      {/* Submit */}
       <button
         type="submit"
         className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition"
