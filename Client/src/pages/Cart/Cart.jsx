@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../../components/context/ShopContext'
 import { MdDelete } from "react-icons/md"
 import CartTotal from '../../components/CartTotal/CartTotal'
+import Checkout from '../Checkout/Checkout'
 
 const Cart = () => {
 
@@ -101,17 +102,23 @@ const Cart = () => {
           })}
 
         </div>
+        <div className="min-h-screen bg-gray-50 px-4 py-10">
 
-        {/* CHECKOUT */}
-        <div className="flex justify-end mt-10">
+          <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8">
 
-          <div className="w-full max-w-sm border p-5 rounded-lg shadow-sm">
+            {/* LEFT: Checkout */}
+            <div className="w-full lg:w-2/3 bg-white border rounded-xl shadow-md p-8">
+              <Checkout />
+            </div>
 
-            <CartTotal />
+            {/* RIGHT: Cart */}
+            <div className="w-full lg:w-1/3 border rounded-lg shadow-sm p-5 bg-white h-fit">
+              <CartTotal />
 
-            <button className="w-full mt-6 bg-black text-white py-3 rounded hover:bg-gray-800 transition">
-              PROCEED TO CHECKOUT
-            </button>
+              <button className="w-full mt-6 bg-black text-white py-3 rounded hover:bg-gray-800 transition">
+                PROCEED TO CHECKOUT
+              </button>
+            </div>
 
           </div>
 

@@ -9,6 +9,8 @@ import Navbar from './components/Navbar/Navbar'
 import Footer from './components/Footer/Footer'
 import {ToastContainer} from "react-toastify"
 
+export const backendurl = import.meta.env.VITE_BACKEND_URL;
+
 const App = () => {
   return (
     <div>

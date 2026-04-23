@@ -56,9 +56,8 @@ const ProductDetails = () => {
                   key={index}
                   src={item}
                   onClick={() => setImage(item)}
-                  className={`w-16 h-16 object-cover rounded cursor-pointer border-2 transition ${
-                    image === item ? "border-orange-500" : "border-transparent"
-                  }`}
+                  className={`w-16 h-16 object-cover rounded cursor-pointer border-2 transition ${image === item ? "border-orange-500" : "border-transparent"
+                    }`}
                   alt="thumb"
                 />
               ))}
@@ -86,15 +85,14 @@ const ProductDetails = () => {
               <p className="font-medium mb-2">Select Size</p>
 
               <div className="flex gap-3 flex-wrap">
-                {productData.sizes?.map((item, index) => (
+                {["S", "M", "L", "XL", "XXL"].map((item, index) => (
                   <button
                     key={index}
                     onClick={() => setSize(item)}
-                    className={`px-4 py-2 border rounded transition ${
-                      size === item
+                    className={`px-4 py-2 border rounded transition ${size === item
                         ? "border-black bg-black text-white"
                         : "border-gray-300 hover:border-black"
-                    }`}
+                      }`}
                   >
                     {item}
                   </button>

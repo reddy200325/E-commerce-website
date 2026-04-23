@@ -5,8 +5,13 @@ import { FaCentos } from "react-icons/fa"
 import { ShopContext } from '../context/ShopContext'
 
 const Navbar = () => {
-    const { updateSearchTerm, getCartCount } = useContext(ShopContext)
+    const { updateSearchTerm, getCartCount, token, setToken } = useContext(ShopContext)
 
+    const logout = () => {
+        navigate("/login")
+        localStorage.removeItem("token")
+        setToken("")
+    }   
     const [loading, setLoading] = useState(false)
     const [menuOpen, setMenuOpen] = useState(false)
     const [profileOpen, setProfileOpen] = useState(false)
@@ -101,7 +106,7 @@ const Navbar = () => {
                                     </Link>
                                     <button
                                         className="w-full text-left px-4 py-2 hover:bg-orange-50"
-                                        onClick={() => setProfileOpen(false)}
+                                        onClick={logout}
                                     >
                                         Logout
                                     </button>

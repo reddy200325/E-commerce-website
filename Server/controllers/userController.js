@@ -20,7 +20,7 @@ export const loginUser = async(req,res)=>{
         const isMatch = await bcrypt.compare(password,user.password);
         if(isMatch){
             const token= createToken(user._id);
-            res.json({success:true, token})
+            res.json({success:true, message: "Login successful", token})
         }else{
             res.json({success:false,message:"Incorrect password"})
         }
@@ -53,7 +53,7 @@ export const registerUser = async(req,res)=>{
 
         const user = await newUser.save();
         const token = createToken(user._id)
-        res.json({success:true,token})
+        res.json({success:true, message: "User registered successfully", token})
     } catch (error) {
         console.log(error)
         res.json({success:false,message:error.message})
