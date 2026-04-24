@@ -12,11 +12,10 @@ export const adminAuth = (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("DECODED:", decoded);
+    req.user = {id: decoded.id};
 
     next();
   } catch (err) {
-    console.log("JWT ERROR:", err.message);
     res.status(401).json({ success: false, message: "Invalid token" });
   }
 };

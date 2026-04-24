@@ -3,9 +3,9 @@ import { product } from "../../assets/assets";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { backendurl } from "../../App";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export const ShopContext = createContext();
-
 const ShopContextProvider = ({ children }) => {
   const currency = "$";
   const delivery_fee = 20;
@@ -101,17 +101,25 @@ const ShopContextProvider = ({ children }) => {
   };
 
   const getUserCart = async (token) => {
-    try {
-      const response = await axios.post(backendurl + "/api/cart/get", {}, { headers: { token } })
-      if (response.data.success) {
-        setCartItems(response.data.cartData)
+  try {
+    const response = await axios.post(
+      backendurl + "/api/cart/get",
+      {},
+      {
+        headers: {
+          token: token || localStorage.getItem("token")
+        }
       }
-    } catch (error) {
-      console.log(error)
-      toast.error(error.message)
-    }
+    );
 
+    if (response.data.success) {
+      setCartItems(response.data.cartData);
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error(error.response?.data?.message || error.message);
   }
+};
 
   const getCartAmount = () => {
     let totalAmount = 0;
@@ -163,6 +171,7 @@ const ShopContextProvider = ({ children }) => {
     currency,
     searchTerm,
     cartItems,
+    setCartItems,
     addtocart,
     getUserCart,
     delivery_fee,

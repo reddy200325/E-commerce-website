@@ -1,4 +1,5 @@
-
+import orderModel from "../models/orderModels.js";
+import userModel from "../models/userModels.js";
 
 
 export const allOrder= async(req,res)=>{
@@ -13,11 +14,12 @@ export const allOrder= async(req,res)=>{
 }
 export const userOrder= async(req,res)=>{
     try {
-        const {userId} = req.body;
+         const userId = req.user.id.toString(); 
         
         const orders = await orderModel.find({userId})
 
         res.json({success:true,orders})
+        console.log("TOKEN USER ID:", req.user.id);
     } catch (error) {
          console.log(error)
         res.json({success:false,message:error.message})
@@ -25,12 +27,14 @@ export const userOrder= async(req,res)=>{
 }
 export const placeOrder= async(req,res)=>{
     try {
-        const {userId,items,amount,address}=req.body
+        const userId = req.user.id;
+        const {items,amount,address}=req.body
         const orderData ={
             userId,
             items,
             amount,
             address,
+            status: "Order Placed",
             paymentMethod:"COD",
             payment: false,
             date: Date.now()

@@ -8,6 +8,8 @@ import ProductDetails from "./pages/ProductDetails/ProductDetails"
 import Navbar from './components/Navbar/Navbar'
 import Footer from './components/Footer/Footer'
 import {ToastContainer} from "react-toastify"
+import Checkout from './pages/Checkout/Checkout'
+import Order from './pages/Order/Order'
 
 export const backendurl = import.meta.env.VITE_BACKEND_URL;
 
@@ -22,6 +24,8 @@ const App = () => {
         <Route path="/cart" element={<Cart />}/>
         <Route path="/category/:category" element={<Collection />}/>
         <Route path="/product/:productId" element={<ProductDetails />}/>
+        <Route path='/checkout' element={<Checkout />} />
+        <Route path='/orders' element={<Order />} />
       </Routes>
       <Footer />
       

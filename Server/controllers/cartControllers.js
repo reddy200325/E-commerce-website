@@ -92,7 +92,7 @@ export const updateCart = async (req, res) => {
 
 export const getUserCart = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const  userId  = req.user.id;
     const userData = await userModel.findById(userId);
     if (!userData) {
       return res

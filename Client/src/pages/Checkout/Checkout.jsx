@@ -4,11 +4,12 @@ import razorpay from "../../assets/razorpay_logo.png";
 import stripe from "../../assets/stripe_logo.png";
 import { ShopContext } from "../../components/context/ShopContext";
 import { toast } from "react-toastify";
-
+import { backendurl } from "../../App";
+import { useNavigate } from "react-router-dom";
 const Checkout = () => {
   const [method, setMethod] = useState("cod");
-
-  const { cartItems, setCartItems, getCartAmount, delivery_fee, products } =
+    const navigate = useNavigate();
+  const { cartItems, setCartItems, getCartAmount, delivery_fee, products} =
     useContext(ShopContext);
 
   const [formData, setFormData] = useState({
@@ -18,7 +19,6 @@ const Checkout = () => {
     street: "",
     country: "",
     phone: "",
-    address: "",
     city: "",
     state: "",
     zipcode: "",
@@ -32,7 +32,7 @@ const Checkout = () => {
     setFormData((data) => ({ ...data, [name]: value }));
   };
 
-  // ✅ FIXED
+
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
@@ -42,8 +42,10 @@ const Checkout = () => {
         for (const item in cartItems[items]) {
           if (cartItems[items][item] > 0) {
             const itemInfo = structuredClone(
-              products.find((product) => product._id === items)
-            );
+              products.find(
+                (product) => product._id.toString() === items // ✅ ONLY FIX
+              )
+            )
 
             if (itemInfo) {
               itemInfo.size = item;
@@ -62,22 +64,25 @@ const Checkout = () => {
       };
 
       const token = localStorage.getItem("token");
-
-      const response = await axios.post(
-        "http://localhost:3000/api/order/place",
-        orderData,
-        { headers: { token } }
-      );
-
-      if (response.data.success) {
-        if (method === "razorpay" || method === "stripe") {
-          window.location.href = response.data.paymentUrl;
-        } else {
-          toast.success("Order placed successfully");
-          setCartItems({});
-        }
-        
+      switch (method) {
+        case "cod":
+          const response = await axios.post(
+            backendurl + "/api/order/place",
+            orderData,
+            { headers: { token } }
+          );
+          if(response.data.success){
+            setCartItems({})
+            navigate("/orders")
+          }
+          else{
+            toast.error(response.data.message)
+          }
+          break;
+        default:
+          break;
       }
+
     } catch (error) {
       console.log(error);
       toast.error(error.message);
@@ -95,9 +100,8 @@ const Checkout = () => {
           <button
             type="button"
             onClick={() => setMethod("stripe")}
-            className={`px-6 py-2 rounded-md border ${
-              method === "stripe" ? "bg-orange-500 text-white" : "bg-white"
-            }`}
+            className={`px-6 py-2 rounded-md border ${method === "stripe" ? "bg-orange-500 text-white" : "bg-white"
+              }`}
           >
             <img src={stripe} alt="stripe" className="h-5" />
           </button>
@@ -105,9 +109,8 @@ const Checkout = () => {
           <button
             type="button"
             onClick={() => setMethod("razorpay")}
-            className={`px-6 py-2 rounded-md border ${
-              method === "razorpay" ? "bg-orange-500 text-white" : "bg-white"
-            }`}
+            className={`px-6 py-2 rounded-md border ${method === "razorpay" ? "bg-orange-500 text-white" : "bg-white"
+              }`}
           >
             <img src={razorpay} alt="razorpay" className="h-5" />
           </button>
@@ -115,9 +118,8 @@ const Checkout = () => {
           <button
             type="button"
             onClick={() => setMethod("cod")}
-            className={`px-6 py-2 rounded-md border ${
-              method === "cod" ? "bg-orange-500 text-white" : "bg-white"
-            }`}
+            className={`px-6 py-2 rounded-md border ${method === "cod" ? "bg-orange-500 text-white" : "bg-white"
+              }`}
           >
             COD
           </button>
@@ -132,7 +134,7 @@ const Checkout = () => {
         <input name="lastName" placeholder="Last Name" onChange={onChangeHandler} className="border p-3 rounded-md" />
         <input name="email" placeholder="Email Address" onChange={onChangeHandler} className="col-span-2 border p-3 rounded-md" />
         <input name="phone" placeholder="Phone Number" onChange={onChangeHandler} className="col-span-2 border p-3 rounded-md" />
-        <input name="address" placeholder="Street Address" onChange={onChangeHandler} className="col-span-2 border p-3 rounded-md" />
+        <input name="street" placeholder="Street Address" onChange={onChangeHandler} className="col-span-2 border p-3 rounded-md" />
         <input name="city" placeholder="City" onChange={onChangeHandler} className="border p-3 rounded-md" />
         <input name="state" placeholder="State" onChange={onChangeHandler} className="border p-3 rounded-md" />
         <input name="zipcode" placeholder="Zipcode" onChange={onChangeHandler} className="border p-3 rounded-md" />
