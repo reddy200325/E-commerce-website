@@ -26,9 +26,8 @@ const Cart = () => {
   }, [cartItems, products])
 
   return (
-    <div className="w-full flex justify-center py-10">
+    <div className="w-full flex justify-center py-8">
 
-      {/* CONTAINER */}
       <div className="w-full max-w-6xl px-4 md:px-6">
 
         {/* CART ITEMS */}
@@ -42,33 +41,34 @@ const Cart = () => {
             return (
               <div
                 key={index}
-                className="grid grid-cols-1 md:grid-cols-3 items-center gap-4 border-t border-b py-4"
+                className="grid grid-cols-1 md:grid-cols-3 items-center gap-4 border-b py-4"
               >
 
                 {/* PRODUCT INFO */}
                 <div className="flex items-start gap-4">
 
-                  <img
-                    src={productData.image[0]}
-                    alt=""
-                    className="w-16 h-16 object-cover rounded"
-                  />
+                  {/* IMAGE (full visible) */}
+                  <div className="w-16 h-16 flex items-center justify-center bg-white border rounded">
+                    <img
+                      src={productData.image[0]}
+                      alt=""
+                      className="max-w-full max-h-full object-contain"
+                    />
+                  </div>
 
                   <div>
-                    <p className="text-lg font-medium">
+                    <p className="text-base md:text-lg font-medium">
                       {productData.name}
                     </p>
 
                     <div className="flex items-center gap-3 mt-2">
-
                       <p className="text-orange-600 font-semibold">
                         {currency}{productData.price}
                       </p>
 
-                      <span className="px-2 py-1 text-sm bg-gray-100 border rounded">
+                      <span className="px-2 py-1 text-xs md:text-sm bg-gray-100 border rounded">
                         {item.size}
                       </span>
-
                     </div>
                   </div>
 
@@ -79,7 +79,7 @@ const Cart = () => {
                   <input
                     type="number"
                     min={1}
-                    defaultValue={item.quantity}
+                    value={item.quantity}
                     onChange={(e) =>
                       !e.target.value || e.target.value == 0
                         ? null
@@ -102,26 +102,30 @@ const Cart = () => {
           })}
 
         </div>
-        <div className="min-h-screen bg-gray-50 px-4 py-10">
 
-          <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8">
+        {/* CHECKOUT + TOTAL */}
+        <div className="mt-10 flex flex-col lg:flex-row gap-8">
 
-            {/* LEFT: Checkout */}
-            <div className="w-full lg:w-2/3 bg-white border rounded-xl shadow-md p-8">
-              <Checkout />
-            </div>
-
-            {/* RIGHT: Cart */}
-            <div className="w-full lg:w-1/3 border rounded-lg shadow-sm p-5 bg-white h-fit">
-              <CartTotal />
-
-              <button className="w-full mt-6 bg-black text-white py-3 rounded hover:bg-gray-800 transition">
-                PROCEED TO CHECKOUT
-              </button>
-            </div>
-
+          {/* LEFT: Checkout Form */}
+          <div className="w-full lg:w-2/3 bg-white border rounded-xl shadow-md p-6 md:p-8">
+            <Checkout />
           </div>
 
+          {/* RIGHT: Cart Total */}
+          <div className="w-full lg:w-1/3 border rounded-lg shadow-sm p-5 bg-white h-fit">
+
+            <CartTotal />
+
+            {/* ✅ MAIN BUTTON (SUBMITS CHECKOUT FORM) */}
+            <button
+              type="submit"
+              form="checkout-form"
+              className="w-full mt-6 bg-black text-white py-3 rounded hover:bg-gray-800 transition"
+            >
+              PLACE ORDER
+            </button>
+
+          </div>
         </div>
 
       </div>

@@ -16,10 +16,12 @@ const RelatedProduct = ({ category }) => {
         setRelatedProduct(related.slice(0, 4))
     }, [products, category])
 
+    // ✅ Hide completely if no items
+    if (relatedProduct.length === 0) return null
+
     return (
         <section className="w-full flex justify-center py-10">
 
-            {/* CONTAINER */}
             <div className="w-full max-w-7xl px-4 md:px-6 lg:px-10">
 
                 {/* HEADER */}
@@ -31,44 +33,36 @@ const RelatedProduct = ({ category }) => {
                 {/* GRID */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
-                    {relatedProduct.length > 0 ? (
-                        relatedProduct.map((product) => (
-                            <div
-                                key={product._id}
-                                className="bg-white rounded-lg shadow hover:shadow-lg transition duration-300 overflow-hidden group"
-                            >
+                    {relatedProduct.map((product) => (
+                        <div
+                            key={product._id}
+                            className="bg-white rounded-lg shadow hover:shadow-lg transition duration-300 overflow-hidden group"
+                        >
 
-                                {/* IMAGE */}
-                                <div className="relative">
-
-                                    <Link to={`/product/${product._id}`}>
-                                        <img
-                                            src={product.image[0]}
-                                            alt={product.name}
-                                            className="w-full h-60 object-cover group-hover:scale-105 transition duration-300"
-                                        />
-                                    </Link>
-
+                            {/* ✅ IMAGE (FULL VISIBLE) */}
+                            <Link to={`/product/${product._id}`}>
+                                <div className="w-full h-60 flex items-center justify-center bg-white">
+                                    <img
+                                        src={product.image[0]}
+                                        alt={product.name}
+                                        className="max-h-full max-w-full object-contain group-hover:scale-105 transition duration-300"
+                                    />
                                 </div>
+                            </Link>
 
-                                {/* INFO */}
-                                <div className="p-3">
+                            {/* INFO */}
+                            <div className="p-3">
+                                <h3 className="text-sm font-medium truncate">
+                                    {product.name}
+                                </h3>
 
-                                    <h3 className="text-sm font-medium truncate">
-                                        {product.name}
-                                    </h3>
-
-                                    <p className="mt-2 font-semibold text-lg">
-                                        ${product.price}
-                                    </p>
-
-                                </div>
-
+                                <p className="mt-2 font-semibold text-lg">
+                                    ${product.price}
+                                </p>
                             </div>
-                        ))
-                    ) : (
-                        <p className="text-gray-500">No related products found</p>
-                    )}
+
+                        </div>
+                    ))}
 
                 </div>
 

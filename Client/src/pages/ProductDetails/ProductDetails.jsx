@@ -32,51 +32,56 @@ const ProductDetails = () => {
   return (
     <div className="w-full">
 
-      {/* MAIN SECTION */}
+      {/* MAIN */}
       <div className="w-full flex justify-center py-10">
 
         <div className="w-full max-w-7xl px-4 md:px-6 grid grid-cols-1 md:grid-cols-2 gap-10">
 
-          {/* LEFT IMAGES */}
+          {/* LEFT */}
           <div>
 
-            {/* MAIN IMAGE */}
-            <div className="w-full">
+            {/* MAIN IMAGE (FIXED) */}
+            <div className="w-full h-[400px] md:h-[450px] flex items-center justify-center bg-white rounded-xl">
               <img
                 src={image}
                 alt="main"
-                className="w-full h-[450px] object-cover rounded-xl"
+                className="max-w-full max-h-full object-contain"
               />
             </div>
 
             {/* THUMBNAILS */}
             <div className="flex gap-3 mt-4 flex-wrap">
               {productData.image?.map((item, index) => (
-                <img
+                <div
                   key={index}
-                  src={item}
                   onClick={() => setImage(item)}
-                  className={`w-16 h-16 object-cover rounded cursor-pointer border-2 transition ${image === item ? "border-orange-500" : "border-transparent"
-                    }`}
-                  alt="thumb"
-                />
+                  className={`w-16 h-16 flex items-center justify-center rounded-lg cursor-pointer transition border 
+                    ${image === item ? "border-orange-500" : "border-gray-200 hover:border-orange-400"}
+                  `}
+                >
+                  <img
+                    src={item}
+                    alt="thumb"
+                    className="max-w-full max-h-full object-contain"
+                  />
+                </div>
               ))}
             </div>
 
           </div>
 
-          {/* RIGHT INFO */}
-          <div>
+          {/* RIGHT */}
+          <div className="flex flex-col">
 
-            <h1 className="text-3xl font-semibold">
+            <h1 className="text-2xl md:text-3xl font-semibold">
               {productData.name}
             </h1>
 
-            <p className="text-orange-500 text-2xl font-bold mt-3">
+            <p className="text-orange-500 text-xl md:text-2xl font-bold mt-3">
               {currency}{productData.price}
             </p>
 
-            <p className="text-gray-600 mt-4 leading-relaxed">
+            <p className="text-gray-600 mt-4 leading-relaxed text-sm md:text-base">
               {productData.description}
             </p>
 
@@ -89,10 +94,13 @@ const ProductDetails = () => {
                   <button
                     key={index}
                     onClick={() => setSize(item)}
-                    className={`px-4 py-2 border rounded transition ${size === item
-                        ? "border-black bg-black text-white"
+                    className={`
+                      px-4 py-2 rounded-md border text-sm transition
+                      ${size === item
+                        ? "bg-black text-white border-black"
                         : "border-gray-300 hover:border-black"
-                      }`}
+                      }
+                    `}
                   >
                     {item}
                   </button>
@@ -102,15 +110,22 @@ const ProductDetails = () => {
 
             {/* POLICY */}
             <div className="mt-6 text-sm text-gray-500 space-y-1">
-              <p>Free Delivery</p>
-              <p>Seamless and Secure Payment</p>
-              <p>Multiple payment options available</p>
+              <p>✔ Free Delivery</p>
+              <p>✔ Secure Payment</p>
+              <p>✔ Easy Returns</p>
             </div>
 
-            {/* ADD TO CART */}
+            {/* BUTTON */}
             <button
               onClick={() => addtocart(productData._id, size)}
-              className="mt-6 w-full md:w-auto bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition"
+              className="
+                mt-6 w-full md:w-fit
+                bg-orange-500 text-white
+                px-6 py-3 rounded-full
+                hover:bg-orange-600
+                active:scale-95
+                transition
+              "
             >
               Add to Cart
             </button>
@@ -120,7 +135,7 @@ const ProductDetails = () => {
         </div>
       </div>
 
-      {/* DESCRIPTION + REVIEWS */}
+      {/* DESCRIPTION */}
       <div className="w-full flex justify-center py-10 border-t">
 
         <div className="w-full max-w-7xl px-4 md:px-6">
@@ -130,16 +145,15 @@ const ProductDetails = () => {
             <p className="text-gray-500">Reviews</p>
           </div>
 
-          <div className="py-6 text-gray-600 space-y-3">
-            <p>Random description</p>
-            <p>Random description</p>
+          <div className="py-6 text-gray-600 space-y-3 text-sm md:text-base">
+            <p>{productData.description}</p>
           </div>
 
         </div>
 
       </div>
 
-      {/* RELATED PRODUCTS */}
+      {/* RELATED */}
       <RelatedProduct category={productData.category} />
 
     </div>

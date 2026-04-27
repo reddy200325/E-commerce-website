@@ -78,11 +78,16 @@ const Collection = () => {
                 >
 
                   <Link to={`/product/${product._id}`}>
-                    <img
-                      src={product.image[0]}
-                      alt={product.name}
-                      className="w-full h-60 object-cover group-hover:scale-105 transition"
-                    />
+                    
+                    {/* ✅ IMAGE FIX (FULL VISIBLE, NO CROP) */}
+                    <div className="w-full h-60 flex items-center justify-center bg-white">
+                      <img
+                        src={product.image[0]}
+                        alt={product.name}
+                        className="max-w-full max-h-full object-contain group-hover:scale-105 transition duration-300"
+                      />
+                    </div>
+
                   </Link>
 
                   <div className="p-3">

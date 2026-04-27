@@ -11,6 +11,9 @@ const BestSeller = () => {
         setBestSeller(bestProduct.slice(0, 4))
     }, [products])
 
+    // ✅ HIDE COMPLETELY if no items
+    if (bestSeller.length === 0) return null
+
     return (
         <section className="px-4 md:px-10 py-6">
 
@@ -23,44 +26,34 @@ const BestSeller = () => {
             {/* Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
-                {bestSeller.length > 0 ? (
-                    bestSeller.map((product) => (
-                        <div
-                            key={product._id}
-                            className="bg-white rounded-lg shadow hover:shadow-lg transition duration-300 overflow-hidden"
-                        >
+                {bestSeller.map((product) => (
+                    <div
+                        key={product._id}
+                        className="bg-white rounded-lg shadow hover:shadow-lg transition duration-300 overflow-hidden"
+                    >
 
-                            {/* IMAGE */}
-                            <div className="relative">
+                        {/* IMAGE */}
+                        <Link to={`/product/${product._id}`}>
+                            <img
+                                src={product.image[0]}
+                                alt={product.name}
+                                className="w-full h-60 object-cover hover:scale-105 transition duration-300"
+                            />
+                        </Link>
 
-                                <Link to={`/product/${product._id}`}>
-                                    <img
-                                        src={product.image[0]}
-                                        alt={product.name}
-                                        className="w-full h-60 object-cover hover:scale-105 transition duration-300"
-                                    />
-                                </Link>
+                        {/* INFO */}
+                        <div className="p-3">
+                            <h3 className="text-sm font-medium truncate">
+                                {product.name}
+                            </h3>
 
-                            </div>
-
-                            {/* INFO */}
-                            <div className="p-3">
-
-                                <h3 className="text-sm font-medium truncate">
-                                    {product.name}
-                                </h3>
-
-                                <p className="mt-2 font-semibold text-lg">
-                                    ${product.price}
-                                </p>
-
-                            </div>
-
+                            <p className="mt-2 font-semibold text-lg">
+                                ${product.price}
+                            </p>
                         </div>
-                    ))
-                ) : (
-                    <p className="text-gray-500">No best sellers found</p>
-                )}
+
+                    </div>
+                ))}
 
             </div>
 

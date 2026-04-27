@@ -5,32 +5,45 @@ const CartTotal = () => {
   const { currency, getCartAmount, delivery_fee } = useContext(ShopContext)
 
   return (
-    <div className="w-full text-[#333]">
-      <div>
-        <h2 className="text-[26px] mb-4">Cart Total</h2>
-      </div>
+    <div className="w-full bg-white rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6 text-gray-800">
 
-      <div>
-        <div className="flex justify-between my-2">
-          <p className="text-base">Subtotal</p>
-          <p>{currency}{getCartAmount()}</p>
+      {/* Title */}
+      <h2 className="text-xl md:text-2xl font-semibold mb-4 tracking-tight">
+        Cart Total
+      </h2>
+
+      {/* Price Details */}
+      <div className="space-y-3">
+
+        <div className="flex justify-between text-sm md:text-base">
+          <p className="text-gray-600">Subtotal</p>
+          <p className="font-medium">
+            {currency}{getCartAmount()}
+          </p>
         </div>
 
-        <hr className="border-t border-[#ddd] my-2" />
+        <hr className="border-gray-200" />
 
-        <div className="flex justify-between my-2">
-          <p>Shipping Fee</p>
-          <p>{currency}{delivery_fee}</p>
+        <div className="flex justify-between text-sm md:text-base">
+          <p className="text-gray-600">Shipping Fee</p>
+          <p className="font-medium">
+            {currency}{delivery_fee}
+          </p>
         </div>
 
-        <div className="flex justify-between mt-4 font-bold">
-          <b>Total</b>
-          <b>
+        <hr className="border-gray-200" />
+
+        {/* Total */}
+        <div className="flex justify-between items-center pt-2 text-base md:text-lg font-semibold">
+          <span>Total</span>
+          <span className="text-green-600">
             {currency}
             {getCartAmount() === 0 ? 0 : getCartAmount() + delivery_fee}
-          </b>
+          </span>
         </div>
+
       </div>
+
     </div>
   )
 }

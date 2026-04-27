@@ -31,68 +31,89 @@ const Order = () => {
   }, [token]);
 
   return (
-    <div className="max-w-5xl mx-auto px-4">
+    <div className="max-w-6xl mx-auto px-4">
 
-      {/* Title */}
-      <div className="pt-8 border-t-2">
-        <h1 className="text-[30px] font-semibold">My Orders</h1>
+      <div className="py-6">
+        <h1 className="text-2xl md:text-3xl font-semibold">
+          My Orders
+        </h1>
       </div>
 
-      {/* Orders */}
-      {
-        orderData.map((order, index) => (
+      <div className="flex flex-col gap-4">
+
+        {orderData.map((order, index) => (
           order.items?.map((item, i) => (
+
             <div
               key={index + "-" + i}
-              className="p-5 mt-4 border border-gray-200 rounded-xl shadow-sm text-gray-700 flex flex-col gap-4"
+              className="
+                flex items-center justify-between gap-4 px-4 py-3
+                bg-white rounded-xl
+                transition-all duration-300
+                hover:bg-orange-50
+                hover:shadow-lg
+                hover:-translate-y-[2px]
+                active:scale-[0.99]
+              "
             >
 
-              {/* Item Details */}
-              <div className="flex items-start gap-6 text-sm">
+              {/* LEFT */}
+              <div className="flex items-center gap-4 flex-1">
+
                 <img
                   src={item.image[0]}
-                  className="w-16 h-16 object-cover rounded-md"
                   alt=""
+                  className="w-16 h-16 object-contain"
                 />
 
-                <div className="flex-1">
-                  <p className="font-semibold text-base">{item.name}</p>
+                <div className="flex flex-col gap-1">
 
-                  <div className="flex flex-wrap items-center gap-3 mt-2 text-base">
-                    <p>{currency}{item.price}</p>
-                    <p>Quantity: {item.quantity}</p>
-                    <p>Size: {item.size}</p>
+                  <p className="font-medium text-sm md:text-base">
+                    {item.name}
+                  </p>
+
+                  <div className="flex flex-wrap gap-3 text-xs md:text-sm text-gray-600">
+                    <span>{currency}{item.price}</span>
+                    <span>Qty: {item.quantity}</span>
+                    <span>Size: {item.size}</span>
                   </div>
 
-                  <p className="mt-2 text-sm text-gray-600">
-                    Date: <span>{new Date(order.date).toLocaleString()}</span>
+                  <p className="text-xs text-gray-400">
+                    {new Date(order.date).toLocaleDateString()}
                   </p>
 
-                  <p className="mt-1 text-sm text-gray-600">
-                    Payment: <span>{order.paymentMethod}</span>
-                  </p>
                 </div>
               </div>
 
-              {/* Status */}
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-red-600"></span>
-                  <p className="text-sm font-medium">{order.status}</p>
-                </div>
-
-                <button
-                  onClick={loadOrderData}
-                  className="border border-gray-300 px-4 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 transition"
-                >
-                  Track Order
-                </button>
+              {/* STATUS */}
+              <div className="hidden sm:flex items-center gap-2 min-w-[120px] justify-center">
+                <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                <p className="text-sm font-medium">
+                  {order.status}
+                </p>
               </div>
+
+              {/* BUTTON */}
+              <button
+                onClick={loadOrderData}
+                className="
+                  px-5 py-2 text-sm font-medium rounded-full
+                  bg-orange-500 text-white
+                  transition-all duration-200
+                  hover:bg-600
+                  hover:shadow-md
+                  active:scale-95
+                "
+              >
+                Track Order
+              </button>
 
             </div>
+
           ))
-        ))
-      }
+        ))}
+
+      </div>
 
     </div>
   );

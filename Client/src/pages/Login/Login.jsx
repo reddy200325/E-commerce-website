@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { backendurl } from "../../App";
@@ -25,6 +24,7 @@ const Login = () => {
           `${backendurl}/api/user/register`,
           { name, email, password }
         );
+
         if (response.data.token) {
           setToken(response.data.token);
           toast.success(response.data.message);
@@ -38,6 +38,7 @@ const Login = () => {
           `${backendurl}/api/user/login`,
           { email, password }
         );
+
         if (response.data.token) {
           setToken(response.data.token);
           toast.success(response.data.message);
@@ -49,27 +50,31 @@ const Login = () => {
 
     } catch (error) {
       console.log(error);
-
-      toast.error(
-        error.response?.data?.message || "Something went wrong"
-      );
+      toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
-     useEffect(() => {
-      if (token) {
-        navigate("/");
-      }
-      },[token]);
+
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, [token]);
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-[linear-gradient(135deg,#ff7739,#ff5500)]">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-orange-400 to-orange-600">
 
-      <form onSubmit={onSubmitHandler} className="bg-white p-8 max-[480px]:p-6 rounded-[15px] w-[90%] max-w-[350px] flex flex-col gap-4 shadow-[0_10px_25px_rgba(0,0,0,0.15)]">
+      {/* CARD */}
+      <form
+        onSubmit={onSubmitHandler}
+        className="w-full max-w-md bg-white rounded-2xl shadow-xl p-6 sm:p-8 flex flex-col gap-4"
+      >
 
         {/* HEADER */}
-        <div className="text-center mb-2">
-          <h2 className="text-[1.8rem] mb-1">{currentState}</h2>
-          <p className="text-[0.9rem] text-[#777]">
+        <div className="text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold">
+            {currentState}
+          </h2>
+          <p className="text-sm text-gray-500 mt-1">
             Welcome back! Please enter your details
           </p>
         </div>
@@ -80,9 +85,9 @@ const Login = () => {
             type="text"
             placeholder="Full Name"
             required
-            onChange={(e) => setName(e.target.value)}
             value={name}
-            className="w-full px-3 py-2.5 border border-[#ddd] rounded-[8px] outline-none focus:border-[#ff7739] focus:shadow-[0_0_5px_rgba(255,119,57,0.3)]"
+            onChange={(e) => setName(e.target.value)}
+            className="w-full px-4 py-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-orange-400"
           />
         )}
 
@@ -90,37 +95,37 @@ const Login = () => {
           type="email"
           placeholder="Email Address"
           required
-          onChange={(e) => setEmail(e.target.value)}
           value={email}
-          className="w-full px-3 py-2.5 border border-[#ddd] rounded-[8px] outline-none focus:border-[#ff7739] focus:shadow-[0_0_5px_rgba(255,119,57,0.3)]"
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full px-4 py-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-orange-400"
         />
 
         <input
           type="password"
           placeholder="Password"
           required
-          onChange={(e) => setPassword(e.target.value)}
           value={password}
-          className="w-full px-3 py-2.5 border border-[#ddd] rounded-[8px] outline-none focus:border-[#ff7739] focus:shadow-[0_0_5px_rgba(255,119,57,0.3)]"
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full px-4 py-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-orange-400"
         />
 
-        {/* FOOTER */}
-        <div className="flex justify-between text-[0.8rem] mt-1">
-          <span className="text-[#999] cursor-pointer">
+        {/* OPTIONS */}
+        <div className="flex justify-between text-xs sm:text-sm">
+          <span className="text-gray-400 cursor-pointer hover:text-gray-600">
             Forgot password?
           </span>
 
           {currentState === "Login" ? (
             <span
               onClick={() => setCurrentState("Sign Up")}
-              className="text-[#ff7739] font-medium cursor-pointer"
+              className="text-orange-500 font-medium cursor-pointer"
             >
               Create account
             </span>
           ) : (
             <span
               onClick={() => setCurrentState("Login")}
-              className="text-[#ff7739] font-medium cursor-pointer"
+              className="text-orange-500 font-medium cursor-pointer"
             >
               Login instead
             </span>
@@ -130,7 +135,7 @@ const Login = () => {
         {/* BUTTON */}
         <button
           type="submit"
-          className="w-full mt-2 bg-[#ff7739] text-white py-2.5 rounded-[25px] cursor-pointer hover:bg-[#ff5500] transition"
+          className="w-full mt-2 bg-orange-500 text-white py-2.5 rounded-full hover:bg-orange-600 transition font-medium"
         >
           {currentState === "Login" ? "Sign In" : "Sign Up"}
         </button>

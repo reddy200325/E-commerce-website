@@ -6,10 +6,12 @@ import { ShopContext } from "../../components/context/ShopContext";
 import { toast } from "react-toastify";
 import { backendurl } from "../../App";
 import { useNavigate } from "react-router-dom";
+
 const Checkout = () => {
   const [method, setMethod] = useState("cod");
-    const navigate = useNavigate();
-  const { cartItems, setCartItems, getCartAmount, delivery_fee, products} =
+  const navigate = useNavigate();
+
+  const { cartItems, setCartItems, getCartAmount, delivery_fee, products } =
     useContext(ShopContext);
 
   const [formData, setFormData] = useState({
@@ -24,17 +26,15 @@ const Checkout = () => {
     zipcode: "",
   });
 
-  // ✅ FIXED
   const onChangeHandler = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-
     setFormData((data) => ({ ...data, [name]: value }));
   };
 
-
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+
     try {
       let orderItems = [];
 
@@ -43,9 +43,9 @@ const Checkout = () => {
           if (cartItems[items][item] > 0) {
             const itemInfo = structuredClone(
               products.find(
-                (product) => product._id.toString() === items // ✅ ONLY FIX
+                (product) => product._id.toString() === items
               )
-            )
+            );
 
             if (itemInfo) {
               itemInfo.size = item;
@@ -64,6 +64,7 @@ const Checkout = () => {
       };
 
       const token = localStorage.getItem("token");
+
       switch (method) {
         case "cod":
           const response = await axios.post(
@@ -71,14 +72,15 @@ const Checkout = () => {
             orderData,
             { headers: { token } }
           );
-          if(response.data.success){
-            setCartItems({})
-            navigate("/orders")
-          }
-          else{
-            toast.error(response.data.message)
+
+          if (response.data.success) {
+            setCartItems({});
+            navigate("/orders");
+          } else {
+            toast.error(response.data.message);
           }
           break;
+
         default:
           break;
       }
@@ -90,7 +92,7 @@ const Checkout = () => {
   };
 
   return (
-    <form onSubmit={onSubmitHandler} className="max-w-4xl mx-auto p-6">
+    <form id="checkout-form" onSubmit={onSubmitHandler} className="max-w-4xl mx-auto p-6">
 
       {/* Payment Options */}
       <div className="border rounded-lg p-6 text-center mb-8 shadow-sm">
@@ -100,8 +102,7 @@ const Checkout = () => {
           <button
             type="button"
             onClick={() => setMethod("stripe")}
-            className={`px-6 py-2 rounded-md border ${method === "stripe" ? "bg-orange-500 text-white" : "bg-white"
-              }`}
+            className={`px-6 py-2 rounded-md border ${method === "stripe" ? "bg-orange-500 text-white" : "bg-white"}`}
           >
             <img src={stripe} alt="stripe" className="h-5" />
           </button>
@@ -109,8 +110,7 @@ const Checkout = () => {
           <button
             type="button"
             onClick={() => setMethod("razorpay")}
-            className={`px-6 py-2 rounded-md border ${method === "razorpay" ? "bg-orange-500 text-white" : "bg-white"
-              }`}
+            className={`px-6 py-2 rounded-md border ${method === "razorpay" ? "bg-orange-500 text-white" : "bg-white"}`}
           >
             <img src={razorpay} alt="razorpay" className="h-5" />
           </button>
@@ -118,8 +118,7 @@ const Checkout = () => {
           <button
             type="button"
             onClick={() => setMethod("cod")}
-            className={`px-6 py-2 rounded-md border ${method === "cod" ? "bg-orange-500 text-white" : "bg-white"
-              }`}
+            className={`px-6 py-2 rounded-md border ${method === "cod" ? "bg-orange-500 text-white" : "bg-white"}`}
           >
             COD
           </button>
@@ -141,13 +140,6 @@ const Checkout = () => {
         <input name="country" placeholder="Country" onChange={onChangeHandler} className="border p-3 rounded-md" />
       </div>
 
-      {/* Place Order */}
-      <button
-        type="submit"
-        className="mt-6 w-full bg-black text-white py-3 rounded-md hover:bg-gray-800"
-      >
-        Place Order
-      </button>
     </form>
   );
 };
