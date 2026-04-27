@@ -7,7 +7,7 @@ import { MdDeleteForever } from "react-icons/md";
 const List = ({ token }) => {
   const [list, setList] = useState([]);
 
-  // 🔹 Fetch products
+  // Fetch products
   const fetchList = async () => {
     try {
       const response = await fetch(`${backendurl}/api/product/list`, {
@@ -29,7 +29,7 @@ const List = ({ token }) => {
     }
   };
 
-  // 🔹 Delete product
+  // Delete product
   const removeProduct = async (id) => {
     try {
       const response = await axios.delete(
@@ -43,7 +43,7 @@ const List = ({ token }) => {
 
       if (response.data.success) {
         toast.success(response.data.message);
-        fetchList(); // refresh list
+        fetchList();
       } else {
         toast.error(response.data.message);
       }
@@ -58,53 +58,80 @@ const List = ({ token }) => {
   }, [token]);
 
   return (
-    <div className="p-4">
-      {/* 🔹 Title */}
-      <p className="mb-3 text-xl font-bold">Product List</p>
+    <div className="p-4 md:p-6">
 
-      {/* 🔹 Table */}
-      <div className="flex flex-col gap-2">
+      {/* Title */}
+      <h2 className="text-2xl font-semibold mb-5">Product List</h2>
 
+      {/* Desktop Table */}
+      <div className="hidden md:block bg-white rounded-xl shadow overflow-hidden">
+        
         {/* Header */}
-        <div className="grid grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center p-2 border-b-2 text-base font-semibold">
+        <div className="grid grid-cols-[80px_2fr_1fr_1fr_100px] bg-gray-100 p-3 text-sm font-semibold text-gray-600">
           <span>Image</span>
           <span>Name</span>
           <span>Category</span>
           <span>Price</span>
-          <span className="text-right">Actions</span>
+          <span className="text-right">Action</span>
         </div>
 
         {/* Rows */}
-        {list.map((item, index) => (
+        {list.map((item) => (
           <div
-            key={index}
-            className="grid grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center gap-2 p-2 border-b"
+            key={item._id}
+            className="grid grid-cols-[80px_2fr_1fr_1fr_100px] items-center p-3 border-t hover:bg-gray-50 transition"
           >
-            {/* Image */}
             <img
               src={item.image?.[0]}
               alt={item.name}
-              className="w-[50px] h-auto object-cover rounded"
+              className="w-14 h-14 object-cover rounded-lg"
             />
 
-            {/* Details */}
-            <p className="text-lg">{item.name}</p>
-            <p className="text-lg">{item.category}</p>
-            <p className="text-lg">
-              {currency}
-              {item.price}
+            <p className="font-medium text-gray-800">{item.name}</p>
+            <p className="text-gray-600">{item.category}</p>
+            <p className="text-gray-700">
+              {currency}{item.price}
             </p>
 
-            {/* Actions */}
             <div className="flex justify-end">
               <MdDeleteForever
                 onClick={() => removeProduct(item._id)}
-                className="text-[22px] cursor-pointer text-red-500 hover:scale-110 transition"
+                className="text-2xl cursor-pointer text-red-500 hover:scale-110 transition"
               />
             </div>
           </div>
         ))}
       </div>
+
+      {/* Mobile Cards */}
+      <div className="flex flex-col gap-4 md:hidden">
+        {list.map((item) => (
+          <div
+            key={item._id}
+            className="bg-white rounded-xl shadow p-4 flex gap-4 items-center"
+          >
+            <img
+              src={item.image?.[0]}
+              alt={item.name}
+              className="w-20 h-20 object-cover rounded-lg"
+            />
+
+            <div className="flex-1">
+              <p className="font-semibold text-gray-800">{item.name}</p>
+              <p className="text-sm text-gray-500">{item.category}</p>
+              <p className="text-sm text-gray-700 mt-1">
+                {currency}{item.price}
+              </p>
+            </div>
+
+            <MdDeleteForever
+              onClick={() => removeProduct(item._id)}
+              className="text-2xl text-red-500 cursor-pointer hover:scale-110 transition"
+            />
+          </div>
+        ))}
+      </div>
+
     </div>
   );
 };

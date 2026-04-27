@@ -8,8 +8,9 @@ const Orders = () => {
     const [orders, setOrders] = useState([])
     const token = localStorage.getItem("token")
 
+    // Fetch all orders
     const fetchAllOrders = async () => {
-        if (!token) return null
+        if (!token) return
 
         try {
             const response = await axios.post(
@@ -29,6 +30,7 @@ const Orders = () => {
         }
     }
 
+    // Update order status
     const statusHandler = async (event, orderId) => {
         try {
             const response = await axios.post(
@@ -38,7 +40,7 @@ const Orders = () => {
             )
 
             if (response.data.success) {
-                await fetchAllOrders()
+                fetchAllOrders()
             }
         } catch (error) {
             console.log(error)
@@ -51,50 +53,74 @@ const Orders = () => {
     }, [token])
 
     return (
-        <div>
-            <h3 className="order-title">All Orders</h3>
+        <div className="p-4 md:p-6 bg-gray-50 min-h-screen">
 
-            <div className="order-container">
-                {orders.map((order, index) => (
-                    <div className="order-card" key={index}>
-                        <div className="order-details">
+            {/* Title */}
+            <h2 className="text-2xl font-semibold mb-6">All Orders</h2>
 
-                            <div className="user-order-details">
-                                <p className="order-customer">
-                                    <span>Customer</span>
+            {/* Orders List */}
+            <div className="flex flex-col gap-5">
+
+                {orders.map((order) => (
+                    <div
+                        key={order._id}
+                        className="bg-white rounded-2xl shadow p-4 md:p-6 flex flex-col gap-4"
+                    >
+
+                        {/* Top Section */}
+                        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+
+                            {/* Customer Info */}
+                            <div className="text-sm text-gray-700">
+                                <p className="font-semibold text-gray-900">
                                     {order.address.firstName} {order.address.lastName}
                                 </p>
+                                <p>{order.address.phone}</p>
+                                <p className="text-gray-500 mt-1">
+                                    {order.address.city}, {order.address.state},{" "}
+                                    {order.address.country} - {order.address.zipcode}
+                                </p>
+                            </div>
 
-                                <p><span>Tel:</span> {order.address.phone}</p>
+                            {/* Order Meta */}
+                            <div className="text-sm text-gray-600">
+                                <p><span className="font-medium">Items:</span> {order.items?.length}</p>
+                                <p><span className="font-medium">Payment:</span> {order.paymentMethod}</p>
+                                <p>
+                                    <span className="font-medium">Date:</span>{" "}
+                                    {new Date(order.date).toLocaleString()}
+                                </p>
+                            </div>
 
-                                <div className="order-address">
-                                    <span>Shipping Address:</span>
-                                    {order.address.city} {order.address.state} {order.address.country} {order.address.zipcode}
+                        </div>
+
+                        {/* Items */}
+                        <div className="border-t pt-3 flex flex-col gap-2">
+                            {order.items?.map((item, index) => (
+                                <div
+                                    key={index}
+                                    className="flex justify-between text-sm text-gray-700 bg-gray-50 px-3 py-2 rounded-lg"
+                                >
+                                    <span>{item.name}</span>
+                                    <span>Qty: {item.quantity}</span>
+                                    <span>Size: {item.size}</span>
                                 </div>
-                            </div>
+                            ))}
+                        </div>
 
-                            <div className='order-items'>
-                                {order.items?.map((item, index) => (
-                                    <div className="order-item" key={index}>
-                                        <p><span>Product:</span> {item.name}</p>
-                                        <p><span>Qty:</span> {item.quantity}</p>
-                                        <p><span>Size:</span> {item.size}</p>
-                                    </div>
-                                ))}
-                            </div>
+                        {/* Bottom Section */}
+                        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
 
-                            <div className="payment-method">
-                                <p><span>Items:</span> {order.items?.length}</p>
-                                <p><span>Method of payment:</span> {order.paymentMethod}</p>
-                                <p><span>Date: </span>{new Date(order.date).toLocaleString()}</p>
-                            </div>
+                            {/* Amount */}
+                            <p className="text-lg font-semibold text-gray-800">
+                                {currency}{order.amount}
+                            </p>
 
-                            <h2 className="order-amount">{currency}{order.amount}</h2>
-
+                            {/* Status */}
                             <select
                                 onChange={(event) => statusHandler(event, order._id)}
                                 value={order.status}
-                                className='order-status'
+                                className="p-2 border rounded-lg focus:ring-2 focus:ring-orange-400 outline-none text-sm"
                             >
                                 <option value='Order Placed'>Order Placed</option>
                                 <option value='Packing'>Packing</option>
@@ -104,8 +130,10 @@ const Orders = () => {
                             </select>
 
                         </div>
+
                     </div>
                 ))}
+
             </div>
         </div>
     )
