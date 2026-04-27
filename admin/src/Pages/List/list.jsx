@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { backendurl, currency } from "../../App";
+import { backendurl, currency } from "@/App";
 import { toast } from "react-toastify";
 import { MdDeleteForever } from "react-icons/md";
 
