@@ -1,27 +1,27 @@
-import jwt from 'jsonwebtoken';
+// Main User Authentication Middleware
+
+import jwt from "jsonwebtoken";
 
 export const authUser = (req, res, next) => {
-    const  token  = req.headers.token;
+  const token = req.headers.token;
 
-    if (!token) {
-        return res.status(401).json({
-            success: false,
-            message: "Unauthorized"
-        });
-    }
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized",
+    });
+  }
 
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        
-        req.user = decoded;
+    req.user = decoded;
 
-        next();
-
-    } catch (error) {
-        return res.status(401).json({
-            success: false,
-            message: "Invalid token"
-        });
-    }
+    next();
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid token",
+    });
+  }
 };

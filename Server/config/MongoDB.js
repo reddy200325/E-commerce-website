@@ -1,6 +1,9 @@
-import mongoose from "mongoose"
+// Main Database Connection Setup
 
-const connectDB =()=>{
- mongoose.connect(`${process.env.MONGODB_URI}/ecommerce`)
-}
-export default connectDB
+import mongoose from "mongoose";
+
+const connectDB = () => {
+  mongoose.connect(`${process.env.MONGODB_URI}/ecommerce`);
+};
+
+export default connectDB;
