@@ -1,5 +1,5 @@
 import React from 'react'
-import hero_img from '../../assets/woman1.png'
+import hero_img from '@/assets/woman1.png'
 import { FaShippingFast } from 'react-icons/fa'
 import { BiSupport } from "react-icons/bi"
 import { MdPayment } from "react-icons/md"

@@ -1,8 +1,7 @@
 import { createContext, useEffect, useState } from "react";
-import { product } from "../../assets/assets";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { backendurl } from "../../App";
+import { backendurl } from "@/App";
 import { Navigate, useNavigate } from "react-router-dom";
 
 export const ShopContext = createContext();
@@ -11,7 +10,7 @@ const ShopContextProvider = ({ children }) => {
   const delivery_fee = 20;
 
   const [cartItems, setCartItems] = useState({});
-  const [products, setProducts] = useState(product);
+  const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [token, setToken] = useState('');
 
@@ -20,10 +19,20 @@ const ShopContextProvider = ({ children }) => {
   };
 
   const addtocart = async (itemId, size) => {
+     if (!itemId) {
+    toast.error("Invalid product");
+    return;
+  }
     if (!size) {
       toast.error("Select product size to continue");
       return;
     }
+      const productExists = products.find(p => p._id === itemId);
+
+  if (!productExists) {
+    toast.error("Product not found");
+    return;
+  }
 
     setCartItems((prev) => {
       const updatedCart = { ...prev };
@@ -70,6 +79,15 @@ const ShopContextProvider = ({ children }) => {
   };
 
   const updateQuantity = async (itemId, size, quantity) => {
+    if (quantity < 0) {
+    toast.error("Invalid quantity");
+    return;
+  }
+
+  if (quantity > 10) {
+    toast.error("Max 10 items allowed");
+    return;
+  }
     setCartItems((prev) => {
       const cartData = { ...prev };
 
@@ -151,7 +169,7 @@ const ShopContextProvider = ({ children }) => {
       }
     } catch (error) {
       console.error(error);
-      toast.error(error.messge)
+      toast.error(error.message)
     }
   };
 

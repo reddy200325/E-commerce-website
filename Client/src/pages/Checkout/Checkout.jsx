@@ -1,17 +1,16 @@
 import { useContext, useState } from "react";
 import axios from "axios";
-import razorpay from "../../assets/razorpay_logo.png";
-import stripe from "../../assets/stripe_logo.png";
-import { ShopContext } from "../../components/context/ShopContext";
+import razorpay from "@/assets/razorpay_logo.png";
+import stripe from "@/assets/stripe_logo.png";
+import { ShopContext } from "@/components/context/ShopContext";
 import { toast } from "react-toastify";
-import { backendurl } from "../../App";
+import { backendurl } from "@/App";
 import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
   const [method, setMethod] = useState("cod");
-  const navigate = useNavigate();
-
-  const { cartItems, setCartItems, getCartAmount, delivery_fee, products } =
+    const navigate = useNavigate();
+  const { cartItems, setCartItems, getCartAmount, delivery_fee, products} =
     useContext(ShopContext);
 
   const [formData, setFormData] = useState({
@@ -25,16 +24,71 @@ const Checkout = () => {
     state: "",
     zipcode: "",
   });
+  const validateForm = () => {
+  if (!formData.firstName.trim()) {
+    toast.error("First name is required");
+    return false;
+  }
 
+  if (!formData.lastName.trim()) {
+    toast.error("Last name is required");
+    return false;
+  }
+
+  if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    toast.error("Enter a valid email");
+    return false;
+  }
+
+  if (!/^\d{10}$/.test(formData.phone)) {
+    toast.error("Phone must be 10 digits");
+    return false;
+  }
+
+  if (!formData.street.trim()) {
+    toast.error("Street address is required");
+    return false;
+  }
+
+  if (!formData.city.trim()) {
+    toast.error("City is required");
+    return false;
+  }
+
+  if (!formData.state.trim()) {
+    toast.error("State is required");
+    return false;
+  }
+
+  if (!/^\d{5,6}$/.test(formData.zipcode)) {
+    toast.error("Enter valid zipcode");
+    return false;
+  }
+
+  if (!formData.country.trim()) {
+    toast.error("Country is required");
+    return false;
+  }
+
+  return true;
+};
+
+  
   const onChangeHandler = (e) => {
     const name = e.target.name;
     const value = e.target.value;
+
     setFormData((data) => ({ ...data, [name]: value }));
   };
 
+
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-
+      if (!validateForm()) return;
+      if (getCartAmount() === 0) {
+  toast.error("Your cart is empty");
+  return;
+}
     try {
       let orderItems = [];
 
@@ -43,9 +97,9 @@ const Checkout = () => {
           if (cartItems[items][item] > 0) {
             const itemInfo = structuredClone(
               products.find(
-                (product) => product._id.toString() === items
+                (product) => product._id.toString() === items // ✅ ONLY FIX
               )
-            );
+            )
 
             if (itemInfo) {
               itemInfo.size = item;
@@ -64,7 +118,6 @@ const Checkout = () => {
       };
 
       const token = localStorage.getItem("token");
-
       switch (method) {
         case "cod":
           const response = await axios.post(
@@ -72,15 +125,25 @@ const Checkout = () => {
             orderData,
             { headers: { token } }
           );
-
-          if (response.data.success) {
-            setCartItems({});
-            navigate("/orders");
-          } else {
-            toast.error(response.data.message);
+          if(response.data.success){
+            setCartItems({})
+            navigate("/orders")
+          }
+          else{
+            toast.error(response.data.message)
           }
           break;
 
+         case 'stripe':{
+          const responseStripe = await axios.post(backendurl + '/api/order/stripe',orderData,{headers:{token}}) 
+          if(responseStripe.data.success){
+            const {session_url} = responseStripe.data
+            window.location.replace(session_url)
+          }else{
+            toast.error(responseStripe.data.message)
+          }
+          break;
+        }
         default:
           break;
       }
@@ -102,7 +165,8 @@ const Checkout = () => {
           <button
             type="button"
             onClick={() => setMethod("stripe")}
-            className={`px-6 py-2 rounded-md border ${method === "stripe" ? "bg-orange-500 text-white" : "bg-white"}`}
+            className={`px-6 py-2 rounded-md border ${method === "stripe" ? "bg-orange-500 text-white" : "bg-white"
+              }`}
           >
             <img src={stripe} alt="stripe" className="h-5" />
           </button>
@@ -110,7 +174,8 @@ const Checkout = () => {
           <button
             type="button"
             onClick={() => setMethod("razorpay")}
-            className={`px-6 py-2 rounded-md border ${method === "razorpay" ? "bg-orange-500 text-white" : "bg-white"}`}
+            className={`px-6 py-2 rounded-md border ${method === "razorpay" ? "bg-orange-500 text-white" : "bg-white"
+              }`}
           >
             <img src={razorpay} alt="razorpay" className="h-5" />
           </button>
@@ -118,7 +183,8 @@ const Checkout = () => {
           <button
             type="button"
             onClick={() => setMethod("cod")}
-            className={`px-6 py-2 rounded-md border ${method === "cod" ? "bg-orange-500 text-white" : "bg-white"}`}
+            className={`px-6 py-2 rounded-md border ${method === "cod" ? "bg-orange-500 text-white" : "bg-white"
+              }`}
           >
             COD
           </button>
@@ -129,17 +195,18 @@ const Checkout = () => {
       <h2 className="text-2xl font-bold mb-6">Shipping Address</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input name="firstName" placeholder="First Name" onChange={onChangeHandler} className="border p-3 rounded-md" />
-        <input name="lastName" placeholder="Last Name" onChange={onChangeHandler} className="border p-3 rounded-md" />
-        <input name="email" placeholder="Email Address" onChange={onChangeHandler} className="col-span-2 border p-3 rounded-md" />
-        <input name="phone" placeholder="Phone Number" onChange={onChangeHandler} className="col-span-2 border p-3 rounded-md" />
-        <input name="street" placeholder="Street Address" onChange={onChangeHandler} className="col-span-2 border p-3 rounded-md" />
-        <input name="city" placeholder="City" onChange={onChangeHandler} className="border p-3 rounded-md" />
-        <input name="state" placeholder="State" onChange={onChangeHandler} className="border p-3 rounded-md" />
-        <input name="zipcode" placeholder="Zipcode" onChange={onChangeHandler} className="border p-3 rounded-md" />
-        <input name="country" placeholder="Country" onChange={onChangeHandler} className="border p-3 rounded-md" />
+        <input name="firstName" placeholder="First Name" onChange={onChangeHandler} required className="border p-3 rounded-md" />
+        <input name="lastName" placeholder="Last Name" onChange={onChangeHandler}  required className="border p-3 rounded-md" />
+        <input name="email" placeholder="Email Address" onChange={onChangeHandler}  required className="col-span-2 border p-3 rounded-md" />
+        <input name="phone" placeholder="Phone Number" onChange={onChangeHandler}  required className="col-span-2 border p-3 rounded-md" />
+        <input name="street" placeholder="Street Address" onChange={onChangeHandler}  required className="col-span-2 border p-3 rounded-md" />
+        <input name="city" placeholder="City" onChange={onChangeHandler}  required className="border p-3 rounded-md" />
+        <input name="state" placeholder="State" onChange={onChangeHandler}  required className="border p-3 rounded-md" />
+        <input name="zipcode" placeholder="Zipcode" onChange={onChangeHandler}  required className="border p-3 rounded-md" />
+        <input name="country" placeholder="Country"  required onChange={onChangeHandler} className="border p-3 rounded-md" />
       </div>
 
+  
     </form>
   );
 };

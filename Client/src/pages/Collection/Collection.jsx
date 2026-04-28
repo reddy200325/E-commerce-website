@@ -1,9 +1,9 @@
 import React, { useContext } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ShopContext } from '../../components/context/ShopContext'
-import men_wear from '../../assets/men-wear.png'
-import women_wear from '../../assets/women-banner.png'
-import kid_wear from '../../assets/kid-banner.png'
+import { ShopContext } from '@/components/context/ShopContext'
+import men_wear from '@/assets/men-wear.png'
+import women_wear from '@/assets/women-banner.png'
+import kid_wear from '@/assets/kid-banner.png'
 
 const Collection = () => {
 

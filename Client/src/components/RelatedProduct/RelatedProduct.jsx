@@ -16,7 +16,6 @@ const RelatedProduct = ({ category }) => {
         setRelatedProduct(related.slice(0, 4))
     }, [products, category])
 
-    // ✅ Hide completely if no items
     if (relatedProduct.length === 0) return null
 
     return (

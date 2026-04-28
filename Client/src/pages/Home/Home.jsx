@@ -1,8 +1,7 @@
 import React from "react";
-import Hero from "../../components/Hero/Hero";
-import BestSeller from "../../components/LastestCollection/BestSeller";
-import HomeCollection from "../../components/HomeCollection/HomeCollection";
-
+import Hero from "@/components/Hero/Hero";
+import BestSeller from "@/components/LastestCollection/BestSeller";
+import HomeCollection from "@/components/HomeCollection/HomeCollection";
 const Home = () => {
   return (
     <main className="w-full min-h-screen bg-gray-50">

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { ShopContext } from '../../components/context/ShopContext'
+import { ShopContext } from '@/components/context/ShopContext'
 import { useParams } from 'react-router-dom'
-import RelatedProduct from '../../components/RelatedProduct/RelatedProduct'
+import RelatedProduct from '@/components/RelatedProduct/RelatedProduct'
 
 const ProductDetails = () => {
 
@@ -20,6 +20,9 @@ const ProductDetails = () => {
       setImage(item.image?.[0] || '')
     }
   }, [productId, products])
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [productId]);
 
   if (!productData) {
     return (

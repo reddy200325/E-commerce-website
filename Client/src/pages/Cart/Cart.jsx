@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { ShopContext } from '../../components/context/ShopContext'
+import { ShopContext } from '@/components/context/ShopContext'
 import { MdDelete } from "react-icons/md"
-import CartTotal from '../../components/CartTotal/CartTotal'
-import Checkout from '../Checkout/Checkout'
-
+import CartTotal from '@/components/CartTotal/CartTotal'
+import Checkout from '@/pages/Checkout/Checkout'
 const Cart = () => {
 
   const { products, currency, cartItems, updateQuantity } = useContext(ShopContext)
@@ -116,7 +115,6 @@ const Cart = () => {
 
             <CartTotal />
 
-            {/* ✅ MAIN BUTTON (SUBMITS CHECKOUT FORM) */}
             <button
               type="submit"
               form="checkout-form"

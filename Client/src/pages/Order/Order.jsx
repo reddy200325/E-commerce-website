@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { ShopContext } from "../../components/context/ShopContext";
+import { ShopContext } from "@/components/context/ShopContext";
 import axios from 'axios';
-import { backendurl } from '../../App';
+import { backendurl } from "@/App";
 
 const Order = () => {
   const { token, currency } = useContext(ShopContext);
