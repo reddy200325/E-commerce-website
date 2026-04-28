@@ -88,28 +88,47 @@ const Navbar = () => {
                     <div className="flex items-center gap-4 md:gap-5">
 
                         {/* PROFILE */}
-                        <div className="relative" ref={profileRef}>
-                            <BiUser
-                                className="text-xl md:text-2xl cursor-pointer hover:text-orange-500 transition"
-                                onClick={() => setProfileOpen(!profileOpen)}
-                            />
+                        <div className="flex items-center gap-4 md:gap-5">
 
-                            {profileOpen && (
-                                <div className="absolute right-0 mt-3 w-40 bg-white shadow-lg rounded-lg overflow-hidden border text-sm">
-                                    <Link to="/login" className="block px-4 py-2 hover:bg-orange-50">
-                                        Login/SignUp
-                                    </Link>
-                                    <Link to="/orders" className="block px-4 py-2 hover:bg-orange-50">
-                                        Order
-                                    </Link>
-                                    <button
-                                        className="w-full text-left px-4 py-2 hover:bg-orange-50"
-                                        onClick={logout}
-                                    >
-                                        Logout
-                                    </button>
-                                </div>
-                            )}
+                            {/* PROFILE */}
+                            <div className="relative" ref={profileRef}>
+                                <BiUser
+                                    className="text-xl md:text-2xl cursor-pointer hover:text-orange-500 transition"
+                                    onClick={() => setProfileOpen(!profileOpen)}
+                                />
+
+                                {profileOpen && (
+                                    <div className="absolute right-0 mt-3 w-40 bg-white shadow-lg rounded-lg overflow-hidden border text-sm">
+
+                                        <Link
+                                            to="/login"
+                                            onClick={() => setProfileOpen(false)}
+                                            className="block px-4 py-2 hover:bg-orange-50"
+                                        >
+                                            Login/SignUp
+                                        </Link>
+
+                                        <Link
+                                            to="/orders"
+                                            onClick={() => setProfileOpen(false)}
+                                            className="block px-4 py-2 hover:bg-orange-50"
+                                        >
+                                            Order
+                                        </Link>
+
+                                        <button
+                                            className="w-full text-left px-4 py-2 hover:bg-orange-50"
+                                            onClick={() => {
+                                                logout();
+                                                setProfileOpen(false);
+                                            }}
+                                        >
+                                            Logout
+                                        </button>
+
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {/* CART */}

@@ -9,8 +9,8 @@ import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
   const [method, setMethod] = useState("cod");
-    const navigate = useNavigate();
-  const { cartItems, setCartItems, getCartAmount, delivery_fee, products} =
+  const navigate = useNavigate();
+  const { cartItems, setCartItems, clearCart, getCartAmount, delivery_fee, products } =
     useContext(ShopContext);
 
   const [formData, setFormData] = useState({
@@ -25,55 +25,55 @@ const Checkout = () => {
     zipcode: "",
   });
   const validateForm = () => {
-  if (!formData.firstName.trim()) {
-    toast.error("First name is required");
-    return false;
-  }
+    if (!formData.firstName.trim()) {
+      toast.error("First name is required");
+      return false;
+    }
 
-  if (!formData.lastName.trim()) {
-    toast.error("Last name is required");
-    return false;
-  }
+    if (!formData.lastName.trim()) {
+      toast.error("Last name is required");
+      return false;
+    }
 
-  if (!/\S+@\S+\.\S+/.test(formData.email)) {
-    toast.error("Enter a valid email");
-    return false;
-  }
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      toast.error("Enter a valid email");
+      return false;
+    }
 
-  if (!/^\d{10}$/.test(formData.phone)) {
-    toast.error("Phone must be 10 digits");
-    return false;
-  }
+    if (!/^\d{10}$/.test(formData.phone)) {
+      toast.error("Phone must be 10 digits");
+      return false;
+    }
 
-  if (!formData.street.trim()) {
-    toast.error("Street address is required");
-    return false;
-  }
+    if (!formData.street.trim()) {
+      toast.error("Street address is required");
+      return false;
+    }
 
-  if (!formData.city.trim()) {
-    toast.error("City is required");
-    return false;
-  }
+    if (!formData.city.trim()) {
+      toast.error("City is required");
+      return false;
+    }
 
-  if (!formData.state.trim()) {
-    toast.error("State is required");
-    return false;
-  }
+    if (!formData.state.trim()) {
+      toast.error("State is required");
+      return false;
+    }
 
-  if (!/^\d{5,6}$/.test(formData.zipcode)) {
-    toast.error("Enter valid zipcode");
-    return false;
-  }
+    if (!/^\d{5,6}$/.test(formData.zipcode)) {
+      toast.error("Enter valid zipcode");
+      return false;
+    }
 
-  if (!formData.country.trim()) {
-    toast.error("Country is required");
-    return false;
-  }
+    if (!formData.country.trim()) {
+      toast.error("Country is required");
+      return false;
+    }
 
-  return true;
-};
+    return true;
+  };
 
-  
+
   const onChangeHandler = (e) => {
     const name = e.target.name;
     const value = e.target.value;
@@ -84,11 +84,11 @@ const Checkout = () => {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-      if (!validateForm()) return;
-      if (getCartAmount() === 0) {
-  toast.error("Your cart is empty");
-  return;
-}
+    if (!validateForm()) return;
+    if (getCartAmount() === 0) {
+      toast.error("Your cart is empty");
+      return;
+    }
     try {
       let orderItems = [];
 
@@ -125,21 +125,31 @@ const Checkout = () => {
             orderData,
             { headers: { token } }
           );
-          if(response.data.success){
-            setCartItems({})
-            navigate("/orders")
+          if (response.data.success) {
+            await clearCart();
+            navigate("/orders");
           }
-          else{
+          else {
             toast.error(response.data.message)
           }
           break;
 
-         case 'stripe':{
-          const responseStripe = await axios.post(backendurl + '/api/order/stripe',orderData,{headers:{token}}) 
-          if(responseStripe.data.success){
-            const {session_url} = responseStripe.data
+        case 'stripe': {
+          const responseStripe = await axios.post(backendurl + '/api/order/stripe', orderData, { headers: { token } })
+          if (responseStripe.data.success) {
+            const { session_url } = responseStripe.data
             window.location.replace(session_url)
-          }else{
+          } else {
+            toast.error(responseStripe.data.message)
+          }
+          break;
+        }
+        case 'razorpay': {
+          const responseStripe = await axios.post(backendurl + '/api/order/stripe', orderData, { headers: { token } })
+          if (responseStripe.data.success) {
+            const { session_url } = responseStripe.data
+            window.location.replace(session_url)
+          } else {
             toast.error(responseStripe.data.message)
           }
           break;
@@ -196,17 +206,17 @@ const Checkout = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input name="firstName" placeholder="First Name" onChange={onChangeHandler} required className="border p-3 rounded-md" />
-        <input name="lastName" placeholder="Last Name" onChange={onChangeHandler}  required className="border p-3 rounded-md" />
-        <input name="email" placeholder="Email Address" onChange={onChangeHandler}  required className="col-span-2 border p-3 rounded-md" />
-        <input name="phone" placeholder="Phone Number" onChange={onChangeHandler}  required className="col-span-2 border p-3 rounded-md" />
-        <input name="street" placeholder="Street Address" onChange={onChangeHandler}  required className="col-span-2 border p-3 rounded-md" />
-        <input name="city" placeholder="City" onChange={onChangeHandler}  required className="border p-3 rounded-md" />
-        <input name="state" placeholder="State" onChange={onChangeHandler}  required className="border p-3 rounded-md" />
-        <input name="zipcode" placeholder="Zipcode" onChange={onChangeHandler}  required className="border p-3 rounded-md" />
-        <input name="country" placeholder="Country"  required onChange={onChangeHandler} className="border p-3 rounded-md" />
+        <input name="lastName" placeholder="Last Name" onChange={onChangeHandler} required className="border p-3 rounded-md" />
+        <input name="email" placeholder="Email Address" onChange={onChangeHandler} required className="col-span-2 border p-3 rounded-md" />
+        <input name="phone" placeholder="Phone Number" onChange={onChangeHandler} required className="col-span-2 border p-3 rounded-md" />
+        <input name="street" placeholder="Street Address" onChange={onChangeHandler} required className="col-span-2 border p-3 rounded-md" />
+        <input name="city" placeholder="City" onChange={onChangeHandler} required className="border p-3 rounded-md" />
+        <input name="state" placeholder="State" onChange={onChangeHandler} required className="border p-3 rounded-md" />
+        <input name="zipcode" placeholder="Zipcode" onChange={onChangeHandler} required className="border p-3 rounded-md" />
+        <input name="country" placeholder="Country" required onChange={onChangeHandler} className="border p-3 rounded-md" />
       </div>
 
-  
+
     </form>
   );
 };

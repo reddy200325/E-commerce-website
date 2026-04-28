@@ -6,7 +6,10 @@ import RelatedProduct from '@/components/RelatedProduct/RelatedProduct'
 const ProductDetails = () => {
 
   const { products, currency, addtocart } = useContext(ShopContext)
-  const { productId } = useParams()
+  const { productId, category } = useParams();
+  const product = products.find(
+  (item) => item._id.toString() === productId
+);
 
   const [productData, setProductData] = useState(null)
   const [image, setImage] = useState('')
@@ -31,6 +34,7 @@ const ProductDetails = () => {
       </div>
     )
   }
+ 
 
   return (
     <div className="w-full">
@@ -93,7 +97,7 @@ const ProductDetails = () => {
               <p className="font-medium mb-2">Select Size</p>
 
               <div className="flex gap-3 flex-wrap">
-                {["S", "M", "L", "XL", "XXL"].map((item, index) => (
+                {productData?.sizes?.map((item, index) => (
                   <button
                     key={index}
                     onClick={() => setSize(item)}

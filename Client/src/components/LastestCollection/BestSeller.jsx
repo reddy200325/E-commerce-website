@@ -7,11 +7,11 @@ const BestSeller = () => {
     const [bestSeller, setBestSeller] = useState([])
 
     useEffect(() => {
-        const bestProduct = products.filter((item) => item.bestseller)
+        const bestProduct = products.filter((item) => item.bestSeller === true)
         setBestSeller(bestProduct.slice(0, 4))
     }, [products])
 
-    // ✅ HIDE COMPLETELY if no items
+    
     if (bestSeller.length === 0) return null
 
     return (

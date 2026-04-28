@@ -77,9 +77,8 @@ const Collection = () => {
                   className="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden group"
                 >
 
-                  <Link to={`/product/${product._id}`}>
+                  <Link to={`/category/${category}/product/${product._id}`}>
                     
-                    {/* ✅ IMAGE FIX (FULL VISIBLE, NO CROP) */}
                     <div className="w-full h-60 flex items-center justify-center bg-white">
                       <img
                         src={product.image[0]}
