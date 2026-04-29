@@ -6,18 +6,145 @@ import { ShopContext } from "@/components/context/ShopContext";
 import { toast } from "react-toastify";
 
 const Login = () => {
-
   const navigate = useNavigate();
   const { token, setToken } = useContext(ShopContext);
 
   const [currentState, setCurrentState] = useState("Login");
-  const [loading, setLoading] = useState(false);
 
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+
+  const [timer, setTimer] = useState(0);
+
+  const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
 
+  // RESET STATES
+  useEffect(() => {
+    setOtp("");
+    setOtpSent(false);
+    setOtpVerified(false);
+    setNewPassword("");
+  }, [currentState, email]);
+
+  // REDIRECT IF LOGGED IN
+  useEffect(() => {
+    if (token) navigate("/");
+  }, [token]);
+
+  // OTP TIMER
+  useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timer]);
+
+  // ================= SEND OTP =================
+  const sendOtpHandler = async () => {
+  if (!email) return toast.error("Enter email first");
+
+  try {
+    setLoading(true);
+
+    const res = await axios.post(`${backendurl}/api/user/send-otp`, {
+      email,
+      type: currentState === "Sign Up" ? "signup" : "reset",
+    });
+
+    if (res.data.success) {
+      toast.success("OTP sent");
+      setOtpSent(true);
+      setTimer(30);
+    } else {
+      toast.error(res.data.message);
+    }
+
+  } catch (error) {
+    toast.error(error.response?.data?.message || "Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
+
+  // ================= VERIFY OTP =================
+  const verifyOtpHandler = async () => {
+    if (!otp) return toast.error("Enter OTP");
+
+    try {
+      setLoading(true);
+
+      const res = await axios.post(`${backendurl}/api/user/verify-otp`, {
+        email,
+        otp,
+        type: currentState === "Sign Up" ? "signup" : "reset",
+      });
+
+      if (res.data.success) {
+        toast.success("OTP verified");
+        setOtpVerified(true);
+
+        // AUTO REGISTER AFTER VERIFY
+        if (currentState === "Sign Up") {
+          const register = await axios.post(`${backendurl}/api/user/register`, {
+            name,
+            email,
+            password,
+          });
+
+          if (register.data.token) {
+            setToken(register.data.token);
+            localStorage.setItem("token", register.data.token);
+            toast.success("Account created");
+            navigate("/");
+          }
+        }
+
+      } else {
+        toast.error("Invalid OTP");
+      }
+
+    } catch {
+      toast.error("Verification failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ================= RESET PASSWORD =================
+  const resetPasswordHandler = async () => {
+    if (!newPassword) return toast.error("Enter new password");
+
+    try {
+      setLoading(true);
+
+      const res = await axios.post(`${backendurl}/api/user/reset-password`, {
+        email,
+        newPassword,
+      });
+
+      if (res.data.success) {
+        toast.success("Password reset successful");
+        setCurrentState("Login");
+      } else {
+        toast.error(res.data.message);
+      }
+
+    } catch {
+      toast.error("Reset failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ================= LOGIN / SIGNUP =================
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -26,15 +153,21 @@ const Login = () => {
       let response;
 
       if (currentState === "Sign Up") {
-        response = await axios.post(
-          `${backendurl}/api/user/register`,
-          { name, email, password }
-        );
+        if (!otpVerified) {
+          return toast.error("Verify OTP first");
+        }
+
+        response = await axios.post(`${backendurl}/api/user/register`, {
+          name,
+          email,
+          password,
+        });
+
       } else {
-        response = await axios.post(
-          `${backendurl}/api/user/login`,
-          { email, password }
-        );
+        response = await axios.post(`${backendurl}/api/user/login`, {
+          email,
+          password,
+        });
       }
 
       if (response.data.token) {
@@ -52,17 +185,13 @@ const Login = () => {
     }
   };
 
-  useEffect(() => {
-    if (token) navigate("/");
-  }, [token]);
-
   return (
     <div className="min-h-screen flex">
 
-      {/* LEFT SIDE */}
+      {/* LEFT */}
       <div className="hidden md:flex w-1/2 bg-gradient-to-br from-orange-500 to-orange-700 text-white items-center justify-center p-10">
         <div className="max-w-md space-y-4">
-          <h1 className="text-4xl font-bold leading-tight">
+          <h1 className="text-4xl font-bold">
             {currentState === "Login" ? "Welcome Back 👋" : "Join Us 🚀"}
           </h1>
           <p className="text-orange-100">
@@ -71,25 +200,16 @@ const Login = () => {
         </div>
       </div>
 
-      {/* RIGHT SIDE */}
+      {/* RIGHT */}
       <div className="flex w-full md:w-1/2 items-center justify-center bg-gray-100 p-6">
 
         <form
-          onSubmit={onSubmitHandler}
+          onSubmit={currentState === "Forgot Password" ? (e) => e.preventDefault() : onSubmitHandler}
           className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6"
         >
 
-          {/* HEADER */}
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-800">
-              {currentState}
-            </h2>
-            <p className="text-sm text-gray-500">
-              Enter your details below
-            </p>
-          </div>
+          <h2 className="text-2xl font-semibold">{currentState}</h2>
 
-          {/* NAME */}
           {currentState === "Sign Up" && (
             <input
               type="text"
@@ -97,77 +217,97 @@ const Login = () => {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-orange-400 outline-none"
+              className="w-full p-3 border rounded-lg"
             />
           )}
 
-          {/* EMAIL */}
           <input
             type="email"
             placeholder="Email Address"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-orange-400 outline-none"
+            className="w-full p-3 border rounded-lg"
           />
 
-          {/* PASSWORD */}
-          <div className="relative">
-            <input
-              type={show ? "text" : "password"}
-              placeholder="Password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-orange-400 outline-none pr-12"
-            />
+          {currentState !== "Forgot Password" && (
+            <div className="relative">
+              <input
+                type={show ? "text" : "password"}
+                placeholder="Password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-3 border rounded-lg pr-12"
+              />
+              <button type="button" onClick={() => setShow(!show)} className="absolute right-3 top-3 text-sm">
+                {show ? "Hide" : "Show"}
+              </button>
+            </div>
+          )}
 
-            <button
-              type="button"
-              onClick={() => setShow(!show)}
-              className="absolute right-3 top-3 text-sm text-gray-500"
-            >
-              {show ? "Hide" : "Show"}
+          {(currentState === "Forgot Password" || currentState === "Sign Up") && !otpSent && (
+            <button type="button" onClick={sendOtpHandler} className="w-full bg-blue-500 text-white py-2 rounded-lg">
+              Send OTP
             </button>
-          </div>
+          )}
 
-          {/* FOOTER LINKS */}
+          {(currentState === "Forgot Password" || currentState === "Sign Up") && otpSent && !otpVerified && (
+            <div className="space-y-2">
+              <input
+                type="text"
+                maxLength={6}
+                placeholder="Enter OTP"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                className="w-full p-3 border rounded-lg text-center tracking-widest"
+              />
+              <button type="button" onClick={verifyOtpHandler} className="w-full bg-green-500 text-white py-2 rounded-lg">
+                Verify OTP
+              </button>
+            </div>
+          )}
+
+          {currentState === "Forgot Password" && otpVerified && (
+            <div className="space-y-2">
+              <input
+                type="password"
+                placeholder="New Password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="w-full p-3 border rounded-lg"
+              />
+              <button type="button" onClick={resetPasswordHandler} className="w-full bg-orange-500 text-white py-2 rounded-lg">
+                Reset Password
+              </button>
+            </div>
+          )}
+
           <div className="flex justify-between text-sm">
-
-            <span className="text-gray-400 cursor-pointer hover:text-gray-600">
-              Forgot password?
-            </span>
-
-            {currentState === "Login" ? (
-              <span
-                onClick={() => setCurrentState("Sign Up")}
-                className="text-orange-500 font-medium cursor-pointer hover:underline"
-              >
-                Create account
-              </span>
-            ) : (
-              <span
-                onClick={() => setCurrentState("Login")}
-                className="text-orange-500 font-medium cursor-pointer hover:underline"
-              >
-                Login instead
+            {currentState === "Login" && (
+              <span onClick={() => setCurrentState("Forgot Password")} className="text-gray-400 cursor-pointer">
+                Forgot password?
               </span>
             )}
 
+            {currentState === "Login" && (
+              <span onClick={() => setCurrentState("Sign Up")} className="text-orange-500 cursor-pointer ml-auto">
+                Create account
+              </span>
+            )}
+
+            {currentState !== "Login" && (
+              <span onClick={() => setCurrentState("Login")} className="text-orange-500 cursor-pointer ml-auto">
+                Back to Login
+              </span>
+            )}
           </div>
 
-          {/* BUTTON */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-orange-500 text-white py-3 rounded-xl font-semibold hover:bg-orange-600 transition active:scale-95"
-          >
-            {loading
-              ? "Please wait..."
-              : currentState === "Login"
-              ? "Sign In"
-              : "Sign Up"}
-          </button>
+          {currentState !== "Forgot Password" && (
+            <button type="submit" disabled={loading} className="w-full bg-orange-500 text-white py-3 rounded-xl">
+              {loading ? "Please wait..." : currentState === "Login" ? "Sign In" : "Sign Up"}
+            </button>
+          )}
 
         </form>
       </div>

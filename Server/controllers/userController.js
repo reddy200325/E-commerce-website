@@ -4,12 +4,96 @@ import validator from "validator";
 import userModel from "../models/userModels.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { generateOTP } from "../utils/generateOTP.js";
+import { saveOTP,verifyOTP } from "../utils/otpStore.js";
+import { sendOTP } from "../utils/sendOTP.js";
 
 export const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: "7d",
   });
 };
+let otpStore = {};
+// SEND OTP
+export const sendOtp = async (req, res) => {
+  try {
+    const { email, type } = req.body;
+
+    const user = await userModel.findOne({ email });
+
+    // SIGN UP
+    if (type === "signup" && user) {
+      return res.json({
+        success: false,
+        message: "User already exist",
+      });
+    }
+
+    // FORGOT PASSWORD
+    if (type === "reset" && !user) {
+      return res.json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const otp = generateOTP();
+
+    otpStore[email] = otp;
+
+    await sendOTP(email, otp);
+
+    res.json({
+      success: true,
+      message: "OTP sent",
+    });
+
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// VERIFY OTP
+export const verifyOtp = (req, res) => {
+  const { email, otp } = req.body;
+
+  // check OTP
+  if (otpStore[email] === otp) {
+    delete otpStore[email]; // remove after success
+
+    return res.json({
+      success: true,
+      message: "OTP verified successfully",
+    });
+  }
+
+  return res.json({
+    success: false,
+    message: "Invalid OTP",
+  });
+};
+
+// RESET PASSWORD
+export const resetPassword = async (req, res) => {
+  const user = await userModel.findOne({ email });
+
+if (!user) {
+  return res.json({ success: false, message: "User not found" });
+}
+  const { email, newPassword } = req.body;
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  await userModel.findOneAndUpdate(
+    { email },
+    { password: hashedPassword }
+  );
+
+   delete otpStore[email];
+
+  res.json({ success: true, message: "Password updated" });
+};
+
 
 export const loginUser = async (req, res) => {
   try {

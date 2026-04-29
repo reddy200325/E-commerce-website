@@ -17,6 +17,8 @@ const Add = () => {
   const [bestSeller, setBestSeller] = useState(false);
   const [sizes, setSizes] = useState([]);
 
+  const [loading, setLoading] = useState(false);
+
   const preview = (file) =>
     file ? URL.createObjectURL(file) : upload_img;
 
@@ -31,7 +33,24 @@ const Add = () => {
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
+    if (loading) return;
+
+    // ✅ Validation
+    if (!name || !description || !price) {
+      return toast.error("Please fill all fields");
+    }
+
+    if (sizes.length === 0) {
+      return toast.error("Please select at least one size");
+    }
+
+    if (!image1) {
+      return toast.error("At least one image is required");
+    }
+
     try {
+      setLoading(true);
+
       const formData = new FormData();
 
       formData.append("name", name);
@@ -61,6 +80,7 @@ const Add = () => {
       if (response.data.success) {
         toast.success(response.data.message);
 
+        // reset form
         setName("");
         setDescription("");
         setPrice("");
@@ -76,6 +96,8 @@ const Add = () => {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Upload failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -85,7 +107,6 @@ const Add = () => {
         onSubmit={onSubmitHandler}
         className="w-full max-w-3xl bg-white p-6 md:p-8 rounded-xl shadow-sm flex flex-col gap-6"
       >
-        {/* Title */}
         <h2 className="text-xl font-semibold text-gray-700">
           Add New Product
         </h2>
@@ -194,17 +215,23 @@ const Add = () => {
           <input
             type="checkbox"
             checked={bestSeller}
-            onChange={() => setBestSeller(!bestSeller)}
+            onChange={(e) => setBestSeller(e.target.checked)}
           />
-          Mark as Bestseller
+          Bestseller
         </label>
 
         {/* Submit */}
         <button
           type="submit"
-          className="bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg transition font-medium"
+          disabled={loading}
+          className={`py-3 rounded-lg font-medium text-white transition
+            ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-orange-500 hover:bg-orange-600"
+            }`}
         >
-          Add Product
+          {loading ? "Adding..." : "Add Product"}
         </button>
       </form>
     </div>
