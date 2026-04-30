@@ -1,10 +1,6 @@
 import express from  "express"
 import { registerUser, loginUser,adminLogin } from "../controllers/userController.js"
-import {
-  sendOtp,
-  verifyOtp,
-  resetPassword,
-} from "../controllers/userController.js";
+import {sendOtp,verifyOtp,resetPassword,} from "../controllers/userController.js";
 const userRouter = express.Router();
 
 userRouter.post('/register',registerUser)

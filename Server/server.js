@@ -1,5 +1,3 @@
-// Main Server Setup (Express App Initialization)
-
 import express from "express";
 import cors from "cors";
 import "dotenv/config";

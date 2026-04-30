@@ -7,13 +7,11 @@ import { MdDeleteForever } from "react-icons/md";
 const List = ({ token }) => {
   const [list, setList] = useState([]);
 
-  // Fetch products
+  // Fetch all products
   const fetchList = async () => {
     try {
       const response = await fetch(`${backendurl}/api/product/list`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = await response.json();
@@ -29,15 +27,13 @@ const List = ({ token }) => {
     }
   };
 
-  // Delete product
+  // Delete a product by id
   const removeProduct = async (id) => {
     try {
       const response = await axios.delete(
         `${backendurl}/api/product/remove/${id}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
@@ -59,14 +55,10 @@ const List = ({ token }) => {
 
   return (
     <div className="p-4 md:p-6">
-
-      {/* Title */}
       <h2 className="text-2xl font-semibold mb-5">Product List</h2>
 
-      {/* Desktop Table */}
+      {/* Desktop table */}
       <div className="hidden md:block bg-white rounded-xl shadow overflow-hidden">
-        
-        {/* Header */}
         <div className="grid grid-cols-[80px_2fr_1fr_1fr_100px] bg-gray-100 p-3 text-sm font-semibold text-gray-600">
           <span>Image</span>
           <span>Name</span>
@@ -75,7 +67,6 @@ const List = ({ token }) => {
           <span className="text-right">Action</span>
         </div>
 
-        {/* Rows */}
         {list.map((item) => (
           <div
             key={item._id}
@@ -103,7 +94,7 @@ const List = ({ token }) => {
         ))}
       </div>
 
-      {/* Mobile Cards */}
+      {/* Mobile cards */}
       <div className="flex flex-col gap-4 md:hidden">
         {list.map((item) => (
           <div
@@ -131,7 +122,6 @@ const List = ({ token }) => {
           </div>
         ))}
       </div>
-
     </div>
   );
 };

@@ -1,5 +1,3 @@
-// Main Product Model Schema
-
 import mongoose from "mongoose";
 
 const productschema = new mongoose.Schema({

@@ -1,7 +1,6 @@
-// Main Cloudinary Configuration Setup
-
 import { v2 as cloudinary } from "cloudinary";
 
+// Initialize Cloudinary with environment variables
 const connectCloudinary = () => {
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,

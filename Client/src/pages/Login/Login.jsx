@@ -10,12 +10,10 @@ const Login = () => {
   const { token, setToken } = useContext(ShopContext);
 
   const [currentState, setCurrentState] = useState("Login");
-
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [newPassword, setNewPassword] = useState("");
-
   const [timer, setTimer] = useState(0);
 
   const [loading, setLoading] = useState(false);
@@ -24,7 +22,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
 
-  // RESET STATES
+  // Reset OTP-related state when mode/email changes
   useEffect(() => {
     setOtp("");
     setOtpSent(false);
@@ -32,12 +30,12 @@ const Login = () => {
     setNewPassword("");
   }, [currentState, email]);
 
-  // REDIRECT IF LOGGED IN
+  // Redirect if already logged in
   useEffect(() => {
     if (token) navigate("/");
   }, [token]);
 
-  // OTP TIMER
+  // Countdown timer for OTP resend
   useEffect(() => {
     if (timer > 0) {
       const interval = setInterval(() => {
@@ -47,34 +45,33 @@ const Login = () => {
     }
   }, [timer]);
 
-  // ================= SEND OTP =================
+  // Send OTP for signup/reset
   const sendOtpHandler = async () => {
-  if (!email) return toast.error("Enter email first");
+    if (!email) return toast.error("Enter email first");
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const res = await axios.post(`${backendurl}/api/user/send-otp`, {
-      email,
-      type: currentState === "Sign Up" ? "signup" : "reset",
-    });
+      const res = await axios.post(`${backendurl}/api/user/send-otp`, {
+        email,
+        type: currentState === "Sign Up" ? "signup" : "reset",
+      });
 
-    if (res.data.success) {
-      toast.success("OTP sent");
-      setOtpSent(true);
-      setTimer(30);
-    } else {
-      toast.error(res.data.message);
+      if (res.data.success) {
+        toast.success("OTP sent");
+        setOtpSent(true);
+        setTimer(30);
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
+  };
 
-  } catch (error) {
-    toast.error(error.response?.data?.message || "Something went wrong");
-  } finally {
-    setLoading(false);
-  }
-};
-
-  // ================= VERIFY OTP =================
+  // Verify OTP
   const verifyOtpHandler = async () => {
     if (!otp) return toast.error("Enter OTP");
 
@@ -91,7 +88,7 @@ const Login = () => {
         toast.success("OTP verified");
         setOtpVerified(true);
 
-        // AUTO REGISTER AFTER VERIFY
+        // Auto-register after successful OTP verification
         if (currentState === "Sign Up") {
           const register = await axios.post(`${backendurl}/api/user/register`, {
             name,
@@ -106,11 +103,9 @@ const Login = () => {
             navigate("/");
           }
         }
-
       } else {
         toast.error("Invalid OTP");
       }
-
     } catch {
       toast.error("Verification failed");
     } finally {
@@ -118,7 +113,7 @@ const Login = () => {
     }
   };
 
-  // ================= RESET PASSWORD =================
+  // Reset password after OTP verification
   const resetPasswordHandler = async () => {
     if (!newPassword) return toast.error("Enter new password");
 
@@ -136,7 +131,6 @@ const Login = () => {
       } else {
         toast.error(res.data.message);
       }
-
     } catch {
       toast.error("Reset failed");
     } finally {
@@ -144,7 +138,7 @@ const Login = () => {
     }
   };
 
-  // ================= LOGIN / SIGNUP =================
+  // Login or Signup
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -153,16 +147,13 @@ const Login = () => {
       let response;
 
       if (currentState === "Sign Up") {
-        if (!otpVerified) {
-          return toast.error("Verify OTP first");
-        }
+        if (!otpVerified) return toast.error("Verify OTP first");
 
         response = await axios.post(`${backendurl}/api/user/register`, {
           name,
           email,
           password,
         });
-
       } else {
         response = await axios.post(`${backendurl}/api/user/login`, {
           email,
@@ -177,7 +168,6 @@ const Login = () => {
       } else {
         toast.error(response.data.message);
       }
-
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
     } finally {
@@ -187,8 +177,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex">
-
-      {/* LEFT */}
+      {/* Left panel */}
       <div className="hidden md:flex w-1/2 bg-gradient-to-br from-orange-500 to-orange-700 text-white items-center justify-center p-10">
         <div className="max-w-md space-y-4">
           <h1 className="text-4xl font-bold">
@@ -200,14 +189,16 @@ const Login = () => {
         </div>
       </div>
 
-      {/* RIGHT */}
+      {/* Right panel */}
       <div className="flex w-full md:w-1/2 items-center justify-center bg-gray-100 p-6">
-
         <form
-          onSubmit={currentState === "Forgot Password" ? (e) => e.preventDefault() : onSubmitHandler}
+          onSubmit={
+            currentState === "Forgot Password"
+              ? (e) => e.preventDefault()
+              : onSubmitHandler
+          }
           className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6"
         >
-
           <h2 className="text-2xl font-semibold">{currentState}</h2>
 
           {currentState === "Sign Up" && (
@@ -240,33 +231,50 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full p-3 border rounded-lg pr-12"
               />
-              <button type="button" onClick={() => setShow(!show)} className="absolute right-3 top-3 text-sm">
+              <button
+                type="button"
+                onClick={() => setShow(!show)}
+                className="absolute right-3 top-3 text-sm"
+              >
                 {show ? "Hide" : "Show"}
               </button>
             </div>
           )}
 
-          {(currentState === "Forgot Password" || currentState === "Sign Up") && !otpSent && (
-            <button type="button" onClick={sendOtpHandler} className="w-full bg-blue-500 text-white py-2 rounded-lg">
-              Send OTP
-            </button>
-          )}
-
-          {(currentState === "Forgot Password" || currentState === "Sign Up") && otpSent && !otpVerified && (
-            <div className="space-y-2">
-              <input
-                type="text"
-                maxLength={6}
-                placeholder="Enter OTP"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                className="w-full p-3 border rounded-lg text-center tracking-widest"
-              />
-              <button type="button" onClick={verifyOtpHandler} className="w-full bg-green-500 text-white py-2 rounded-lg">
-                Verify OTP
+          {(currentState === "Forgot Password" || currentState === "Sign Up") &&
+            !otpSent && (
+              <button
+                type="button"
+                onClick={sendOtpHandler}
+                className="w-full bg-blue-500 text-white py-2 rounded-lg"
+              >
+                Send OTP
               </button>
-            </div>
-          )}
+            )}
+
+          {(currentState === "Forgot Password" || currentState === "Sign Up") &&
+            otpSent &&
+            !otpVerified && (
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  maxLength={6}
+                  placeholder="Enter OTP"
+                  value={otp}
+                  onChange={(e) =>
+                    setOtp(e.target.value.replace(/\D/g, ""))
+                  }
+                  className="w-full p-3 border rounded-lg text-center tracking-widest"
+                />
+                <button
+                  type="button"
+                  onClick={verifyOtpHandler}
+                  className="w-full bg-green-500 text-white py-2 rounded-lg"
+                >
+                  Verify OTP
+                </button>
+              </div>
+            )}
 
           {currentState === "Forgot Password" && otpVerified && (
             <div className="space-y-2">
@@ -277,7 +285,11 @@ const Login = () => {
                 onChange={(e) => setNewPassword(e.target.value)}
                 className="w-full p-3 border rounded-lg"
               />
-              <button type="button" onClick={resetPasswordHandler} className="w-full bg-orange-500 text-white py-2 rounded-lg">
+              <button
+                type="button"
+                onClick={resetPasswordHandler}
+                className="w-full bg-orange-500 text-white py-2 rounded-lg"
+              >
                 Reset Password
               </button>
             </div>
@@ -285,30 +297,46 @@ const Login = () => {
 
           <div className="flex justify-between text-sm">
             {currentState === "Login" && (
-              <span onClick={() => setCurrentState("Forgot Password")} className="text-gray-400 cursor-pointer">
+              <span
+                onClick={() => setCurrentState("Forgot Password")}
+                className="text-gray-400 cursor-pointer"
+              >
                 Forgot password?
               </span>
             )}
 
             {currentState === "Login" && (
-              <span onClick={() => setCurrentState("Sign Up")} className="text-orange-500 cursor-pointer ml-auto">
+              <span
+                onClick={() => setCurrentState("Sign Up")}
+                className="text-orange-500 cursor-pointer ml-auto"
+              >
                 Create account
               </span>
             )}
 
             {currentState !== "Login" && (
-              <span onClick={() => setCurrentState("Login")} className="text-orange-500 cursor-pointer ml-auto">
+              <span
+                onClick={() => setCurrentState("Login")}
+                className="text-orange-500 cursor-pointer ml-auto"
+              >
                 Back to Login
               </span>
             )}
           </div>
 
           {currentState !== "Forgot Password" && (
-            <button type="submit" disabled={loading} className="w-full bg-orange-500 text-white py-3 rounded-xl">
-              {loading ? "Please wait..." : currentState === "Login" ? "Sign In" : "Sign Up"}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-orange-500 text-white py-3 rounded-xl"
+            >
+              {loading
+                ? "Please wait..."
+                : currentState === "Login"
+                ? "Sign In"
+                : "Sign Up"}
             </button>
           )}
-
         </form>
       </div>
     </div>

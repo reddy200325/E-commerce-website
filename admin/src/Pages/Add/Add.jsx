@@ -9,19 +9,19 @@ const Add = () => {
   const [image2, setImage2] = useState(null);
   const [image3, setImage3] = useState(null);
   const [image4, setImage4] = useState(null);
-
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("Men");
   const [price, setPrice] = useState("");
   const [bestSeller, setBestSeller] = useState(false);
   const [sizes, setSizes] = useState([]);
-
   const [loading, setLoading] = useState(false);
 
+  // Generate preview URL for selected images
   const preview = (file) =>
     file ? URL.createObjectURL(file) : upload_img;
 
+  // Toggle size selection
   const toggleSize = (size) => {
     setSizes((prev) =>
       prev.includes(size)
@@ -30,20 +30,18 @@ const Add = () => {
     );
   };
 
+  // Handle product submission
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-
     if (loading) return;
 
-    // ✅ Validation
+    // Basic validation
     if (!name || !description || !price) {
       return toast.error("Please fill all fields");
     }
-
     if (sizes.length === 0) {
       return toast.error("Please select at least one size");
     }
-
     if (!image1) {
       return toast.error("At least one image is required");
     }
@@ -52,7 +50,6 @@ const Add = () => {
       setLoading(true);
 
       const formData = new FormData();
-
       formData.append("name", name);
       formData.append("description", description);
       formData.append("category", category);
@@ -70,17 +67,11 @@ const Add = () => {
       const response = await axios.post(
         backendurl + "/api/product/add",
         formData,
-        {
-          headers: {
-            token,
-          },
-        }
+        { headers: { token } }
       );
 
       if (response.data.success) {
         toast.success(response.data.message);
-
-        // reset form
         setName("");
         setDescription("");
         setPrice("");
@@ -111,10 +102,9 @@ const Add = () => {
           Add New Product
         </h2>
 
-        {/* Images */}
+        {/* Image upload */}
         <div>
           <p className="mb-3 font-medium text-gray-600">Upload Images</p>
-
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[image1, image2, image3, image4].map((img, index) => (
               <label
@@ -132,7 +122,6 @@ const Add = () => {
                     if (index === 3) setImage4(file);
                   }}
                 />
-
                 {img ? (
                   <img
                     src={preview(img)}
@@ -150,7 +139,7 @@ const Add = () => {
           </div>
         </div>
 
-        {/* Inputs */}
+        {/* Product details */}
         <input
           type="text"
           placeholder="Product Name"
@@ -210,7 +199,7 @@ const Add = () => {
           </div>
         </div>
 
-        {/* Bestseller */}
+        {/* Bestseller toggle */}
         <label className="flex items-center gap-2 text-gray-600 cursor-pointer">
           <input
             type="checkbox"
@@ -221,9 +210,7 @@ const Add = () => {
         </label>
 
         {/* Submit */}
-        <button
-          type="submit"
-          disabled={loading}
+        <button  type="submit" disabled={loading}
           className={`py-3 rounded-lg font-medium text-white transition
             ${
               loading

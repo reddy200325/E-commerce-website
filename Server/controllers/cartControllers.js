@@ -1,17 +1,17 @@
-// Main Cart Controller (Add, Update, Get Cart)
-
 import userModel from "../models/userModels.js";
 
+// Add product to cart
 export const addToCart = async (req, res) => {
   try {
     const { itemId, size } = req.body;
     const userId = req.user.id;
-    const userData = await userModel.findById(userId);
 
+    const userData = await userModel.findById(userId);
     if (!userData) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
     }
 
     let cartData = userData.cartData;
@@ -26,13 +26,18 @@ export const addToCart = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Product added to cart"
+      message: "Product added to cart",
     });
+
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
+// Update cart item quantity
 export const updateCart = async (req, res) => {
   try {
     const { itemId, size, quantity } = req.body;
@@ -41,16 +46,15 @@ export const updateCart = async (req, res) => {
     if (!userId) {
       return res.status(401).json({
         success: false,
-        message: "User not authenticated"
+        message: "User not authenticated",
       });
     }
 
     const userData = await userModel.findById(userId);
-
     if (!userData) {
       return res.status(404).json({
         success: false,
-        message: "User not found"
+        message: "User not found",
       });
     }
 
@@ -63,6 +67,7 @@ export const updateCart = async (req, res) => {
     if (quantity === 0) {
       delete cartData[itemId][size];
 
+      // Remove item if no sizes left
       if (Object.keys(cartData[itemId]).length === 0) {
         delete cartData[itemId];
       }
@@ -75,49 +80,59 @@ export const updateCart = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Cart updated",
-      cartData
+      cartData,
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
 
+// Get user cart
 export const getUserCart = async (req, res) => {
   try {
     const userId = req.user.id;
+
     const userData = await userModel.findById(userId);
-
     if (!userData) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
     }
-
-    const cartData = userData.cartData;
 
     res.status(200).json({
       success: true,
-      cartData: userData.cartData
+      cartData: userData.cartData,
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
 
+// Clear cart
 export const clearCart = async (req, res) => {
   try {
     await userModel.findByIdAndUpdate(req.userId, {
-      cartData: {}
+      cartData: {},
     });
 
-    res.json({ success: true, message: "Cart cleared" });
+    res.json({
+      success: true,
+      message: "Cart cleared",
+    });
+
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.json({
+      success: false,
+      message: error.message,
+    });
   }
 };

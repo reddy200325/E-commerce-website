@@ -1,12 +1,12 @@
-// Main Product Controller (Add, List, Remove, Single Product)
-
 import productModel from "../models/productModels.js";
 import { v2 as cloudinary } from "cloudinary";
 
+// ================= ADD PRODUCT =================
 const addProduct = async (req, res) => {
   try {
     const { name, description, price, category, sizes, bestSeller } = req.body;
 
+    // Extract uploaded images
     const image1 = req.files.image1 && req.files.image1[0];
     const image2 = req.files.image2 && req.files.image2[0];
     const image3 = req.files.image3 && req.files.image3[0];
@@ -16,7 +16,8 @@ const addProduct = async (req, res) => {
       (item) => item !== undefined
     );
 
-    let imagesUrl = await Promise.all(
+    // Upload images to Cloudinary
+    const imagesUrl = await Promise.all(
       images.map(async (item) => {
         const result = await cloudinary.uploader.upload(item.path, {
           resource_type: "image",
@@ -25,13 +26,14 @@ const addProduct = async (req, res) => {
       })
     );
 
+    // Prepare product data
     const productData = {
       name,
       description,
       price: Number(price),
       category,
       sizes: sizes ? JSON.parse(sizes) : [],
-     bestSeller: bestSeller === "true",
+      bestSeller: bestSeller === "true",
       image: imagesUrl,
       date: Date.now(),
     };
@@ -45,6 +47,7 @@ const addProduct = async (req, res) => {
   }
 };
 
+// ================= LIST PRODUCTS =================
 const listProduct = async (req, res) => {
   try {
     const products = await productModel.find({});
@@ -54,6 +57,7 @@ const listProduct = async (req, res) => {
   }
 };
 
+// ================= REMOVE PRODUCT =================
 const removeProduct = async (req, res) => {
   try {
     await productModel.findByIdAndDelete(req.params.id);
@@ -63,6 +67,7 @@ const removeProduct = async (req, res) => {
   }
 };
 
+// ================= GET SINGLE PRODUCT =================
 const singleProduct = async (req, res) => {
   try {
     const product = await productModel.findById(req.params.id);

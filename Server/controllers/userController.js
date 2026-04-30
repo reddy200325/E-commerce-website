@@ -1,65 +1,54 @@
-// Main Auth Controller (User Login, Register, Admin Login, Token)
-
 import validator from "validator";
 import userModel from "../models/userModels.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { generateOTP } from "../utils/generateOTP.js";
-import { saveOTP,verifyOTP } from "../utils/otpStore.js";
+import { saveOTP, verifyOTP } from "../utils/otpStore.js";
 import { sendOTP } from "../utils/sendOTP.js";
 
+// ================= GENERATE JWT TOKEN =================
 export const createToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 };
+
+// Temporary in-memory OTP store
 let otpStore = {};
-// SEND OTP
+
+// ================= SEND OTP =================
 export const sendOtp = async (req, res) => {
   try {
     const { email, type } = req.body;
 
     const user = await userModel.findOne({ email });
 
-    // SIGN UP
+    // Validation based on request type
     if (type === "signup" && user) {
-      return res.json({
-        success: false,
-        message: "User already exist",
-      });
+      return res.json({ success: false, message: "User already exist" });
     }
 
-    // FORGOT PASSWORD
     if (type === "reset" && !user) {
-      return res.json({
-        success: false,
-        message: "User not found",
-      });
+      return res.json({ success: false, message: "User not found" });
     }
 
     const otp = generateOTP();
 
+    // Store OTP temporarily
     otpStore[email] = otp;
 
     await sendOTP(email, otp);
 
-    res.json({
-      success: true,
-      message: "OTP sent",
-    });
-
+    res.json({ success: true, message: "OTP sent" });
   } catch (error) {
     res.json({ success: false, message: error.message });
   }
 };
 
-// VERIFY OTP
+// ================= VERIFY OTP =================
 export const verifyOtp = (req, res) => {
   const { email, otp } = req.body;
 
-  // check OTP
   if (otpStore[email] === otp) {
-    delete otpStore[email]; // remove after success
+    delete otpStore[email]; // Remove OTP after success
 
     return res.json({
       success: true,
@@ -67,20 +56,18 @@ export const verifyOtp = (req, res) => {
     });
   }
 
-  return res.json({
-    success: false,
-    message: "Invalid OTP",
-  });
+  return res.json({ success: false, message: "Invalid OTP" });
 };
 
-// RESET PASSWORD
+// ================= RESET PASSWORD =================
 export const resetPassword = async (req, res) => {
+  const { email, newPassword } = req.body;
+
   const user = await userModel.findOne({ email });
 
-if (!user) {
-  return res.json({ success: false, message: "User not found" });
-}
-  const { email, newPassword } = req.body;
+  if (!user) {
+    return res.json({ success: false, message: "User not found" });
+  }
 
   const hashedPassword = await bcrypt.hash(newPassword, 10);
 
@@ -89,12 +76,12 @@ if (!user) {
     { password: hashedPassword }
   );
 
-   delete otpStore[email];
+  delete otpStore[email];
 
   res.json({ success: true, message: "Password updated" });
 };
 
-
+// ================= USER LOGIN =================
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -104,7 +91,7 @@ export const loginUser = async (req, res) => {
     if (!user) {
       return res
         .status(400)
-        .json({ success: false, message: "Invalid user " });
+        .json({ success: false, message: "Invalid user" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -120,6 +107,7 @@ export const loginUser = async (req, res) => {
   }
 };
 
+// ================= USER REGISTER =================
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -132,6 +120,7 @@ export const registerUser = async (req, res) => {
         .json({ success: false, message: "User already exist" });
     }
 
+    // Basic validation
     if (!validator.isEmail(email)) {
       return res
         .status(400)
@@ -145,6 +134,7 @@ export const registerUser = async (req, res) => {
       });
     }
 
+    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -168,6 +158,7 @@ export const registerUser = async (req, res) => {
   }
 };
 
+// ================= ADMIN LOGIN =================
 export const adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;

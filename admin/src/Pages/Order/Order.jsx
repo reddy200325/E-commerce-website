@@ -1,23 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { backendurl } from "@/App";
+import { backendurl, currency } from "@/App";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { currency } from "@/App";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const token = localStorage.getItem("token");
 
+  // Fetch all orders from backend
   const fetchAllOrders = async () => {
     if (!token) return null;
-
     try {
       const response = await axios.post(
         backendurl + "/api/order/list",
         {},
         { headers: { token } }
       );
-
       if (response.data.success) {
         setOrders(response.data.orders);
       } else {
@@ -28,6 +26,7 @@ const Orders = () => {
     }
   };
 
+  // Update order status
   const statusHandler = async (event, orderId) => {
     try {
       const response = await axios.post(
@@ -35,9 +34,8 @@ const Orders = () => {
         { orderId, status: event.target.value },
         { headers: { token } }
       );
-
       if (response.data.success) {
-        await fetchAllOrders();
+        await fetchAllOrders(); // refresh orders after update
       }
     } catch (error) {
       toast.error(error.message);
@@ -55,14 +53,12 @@ const Orders = () => {
       </h3>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-5">
-
         {orders.map((order) => (
           <div
             key={order._id}
             className="bg-white border rounded-xl p-5 shadow-sm hover:shadow-md transition flex flex-col gap-5"
           >
-
-            {/* Customer Info */}
+            {/* Customer details */}
             <div className="bg-gray-50 p-4 rounded-lg text-sm text-gray-600">
               <p className="text-base font-semibold text-gray-800 mb-2">
                 Customer Details
@@ -80,12 +76,12 @@ const Orders = () => {
 
               <p>
                 <span className="font-medium text-gray-700">Address:</span>{" "}
-                {order.address.city}, {order.address.state}, {order.address.country} -{" "}
-                {order.address.zipcode}
+                {order.address.city}, {order.address.state},{" "}
+                {order.address.country} - {order.address.zipcode}
               </p>
             </div>
 
-            {/* Items */}
+            {/* Order items */}
             <div className="text-sm">
               <p className="font-semibold text-gray-700 mb-2">Items</p>
 
@@ -106,7 +102,7 @@ const Orders = () => {
               </div>
             </div>
 
-            {/* Payment Info */}
+            {/* Payment info */}
             <div className="text-sm bg-gray-50 p-4 rounded-lg">
               <div className="flex justify-between text-gray-700">
                 <span>Items:</span>
@@ -124,14 +120,14 @@ const Orders = () => {
               </div>
             </div>
 
-            {/* Amount */}
+            {/* Total amount */}
             <div className="text-center">
               <p className="text-xl font-bold text-red-500">
                 {currency}{order.amount}
               </p>
             </div>
 
-            {/* Status */}
+            {/* Order status */}
             <select
               value={order.status}
               onChange={(event) => statusHandler(event, order._id)}
@@ -143,10 +139,8 @@ const Orders = () => {
               <option value="Out for Delivery">Out for Delivery</option>
               <option value="Delivered">Delivered</option>
             </select>
-
           </div>
         ))}
-
       </div>
     </div>
   );

@@ -1,15 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { ShopContext } from '@/components/context/ShopContext'
-import { MdDelete } from "react-icons/md"
-import CartTotal from '@/components/CartTotal/CartTotal'
-import Checkout from '@/pages/Checkout/Checkout'
-const Cart = () => {
+import React, { useContext, useEffect, useState } from 'react';
+import { ShopContext } from '@/components/context/ShopContext';
+import { MdDelete } from "react-icons/md";
+import CartTotal from '@/components/CartTotal/CartTotal';
+import Checkout from '@/pages/Checkout/Checkout';
 
-  const { products, currency, cartItems, updateQuantity } = useContext(ShopContext)
-  const [cartData, setCartData] = useState([])
+const Cart = () => {
+  const { products, currency, cartItems, updateQuantity } = useContext(ShopContext);
+  const [cartData, setCartData] = useState([]);
 
   useEffect(() => {
-    if (!cartItems || products.length === 0) return
+    if (!cartItems || products.length === 0) return;
 
     const tempData = Object.entries(cartItems).flatMap(([itemId, sizes]) =>
       Object.entries(sizes || {})
@@ -19,34 +19,28 @@ const Cart = () => {
           size,
           quantity
         }))
-    )
+    );
 
-    setCartData(tempData)
-  }, [cartItems, products])
+    setCartData(tempData);
+  }, [cartItems, products]);
 
   return (
     <div className="w-full flex justify-center py-8">
-
       <div className="w-full max-w-6xl px-4 md:px-6">
 
-        {/* CART ITEMS */}
+        {/* Cart items */}
         <div className="flex flex-col gap-4">
-
           {cartData.map((item, index) => {
-
-            const productData = products.find(p => p._id === item._id)
-            if (!productData) return null
+            const productData = products.find(p => p._id === item._id);
+            if (!productData) return null;
 
             return (
               <div
                 key={index}
                 className="grid grid-cols-1 md:grid-cols-3 items-center gap-4 border-b py-4"
               >
-
-                {/* PRODUCT INFO */}
+                {/* Product info */}
                 <div className="flex items-start gap-4">
-
-                  {/* IMAGE (full visible) */}
                   <div className="w-16 h-16 flex items-center justify-center bg-white border rounded">
                     <img
                       src={productData.image[0]}
@@ -70,10 +64,9 @@ const Cart = () => {
                       </span>
                     </div>
                   </div>
-
                 </div>
 
-                {/* QUANTITY */}
+                {/* Quantity */}
                 <div className="flex justify-start md:justify-center">
                   <input
                     type="number"
@@ -88,31 +81,25 @@ const Cart = () => {
                   />
                 </div>
 
-                {/* DELETE */}
+                {/* Remove item */}
                 <div className="flex justify-start md:justify-end">
                   <MdDelete
                     onClick={() => updateQuantity(item._id, item.size, 0)}
                     className="text-2xl cursor-pointer text-red-500 hover:scale-110 transition"
                   />
                 </div>
-
               </div>
-            )
+            );
           })}
-
         </div>
 
-        {/* CHECKOUT + TOTAL */}
+        {/* Checkout section */}
         <div className="mt-10 flex flex-col lg:flex-row gap-8">
-
-          {/* LEFT: Checkout Form */}
           <div className="w-full lg:w-2/3 bg-white border rounded-xl shadow-md p-6 md:p-8">
             <Checkout />
           </div>
 
-          {/* RIGHT: Cart Total */}
           <div className="w-full lg:w-1/3 border rounded-lg shadow-sm p-5 bg-white h-fit">
-
             <CartTotal />
 
             <button
@@ -122,13 +109,12 @@ const Cart = () => {
             >
               PLACE ORDER
             </button>
-
           </div>
         </div>
 
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Cart
+export default Cart;

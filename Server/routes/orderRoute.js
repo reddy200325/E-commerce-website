@@ -3,8 +3,6 @@ import { allOrder, placeOrder, placeOrderRazorpay, placeOrderStripe, updateStatu
 import { authUser } from '../middleware/auth.js'
 import { adminAuth }from '../middleware/adminAuth.js'
 
-
-
 export const orderRouter = express.Router()
 //admin features
 orderRouter.post('/list',adminAuth,allOrder)
