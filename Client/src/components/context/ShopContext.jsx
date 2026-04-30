@@ -20,53 +20,59 @@ const ShopContextProvider = ({ children }) => {
 
   // ✅ ADD TO CART
   const addtocart = async (itemId, size) => {
-    if (!itemId) {
-      toast.error("Invalid product");
-      return;
+  if (!itemId) {
+    toast.error("Invalid product");
+    return;
+  }
+
+  if (!size) {
+    toast.error("Select product size to continue");
+    return;
+  }
+
+  // ❗ REQUIRE LOGIN FIRST
+  if (!token) {
+    toast.error("Please login to add items");
+    navigate("/login");
+    return;
+  }
+
+  const productExists = products.find(
+    (p) => p._id.toString() === itemId
+  );
+
+  if (!productExists) {
+    toast.error("Product not found");
+    return;
+  }
+
+  setCartItems((prev) => {
+    const updatedCart = { ...prev };
+
+    if (!updatedCart[itemId]) {
+      updatedCart[itemId] = {};
     }
 
-    if (!size) {
-      toast.error("Select product size to continue");
-      return;
-    }
+    updatedCart[itemId][size] =
+      (updatedCart[itemId][size] || 0) + 1;
 
-    const productExists = products.find(
-      (p) => p._id.toString() === itemId
+    return updatedCart;
+  });
+
+  try {
+    await axios.post(
+      `${backendurl}/api/cart/add`,
+      { itemId, size },
+      { headers: { token } }
     );
-
-    if (!productExists) {
-      toast.error("Product not found");
-      return;
-    }
-
-    setCartItems((prev) => {
-      const updatedCart = { ...prev };
-
-      if (!updatedCart[itemId]) {
-        updatedCart[itemId] = {};
-      }
-
-      updatedCart[itemId][size] =
-        (updatedCart[itemId][size] || 0) + 1;
-
-      return updatedCart;
-    });
 
     toast.success("Product added to cart");
 
-    if (token) {
-      try {
-        await axios.post(
-          `${backendurl}/api/cart/add`,
-          { itemId, size },
-          { headers: { token } }
-        );
-      } catch (error) {
-        console.log(error);
-        toast.error(error.message);
-      }
-    }
-  };
+  } catch (error) {
+    console.log(error);
+    toast.error(error.message);
+  }
+};
 
   // ✅ UPDATE QUANTITY
   const updateQuantity = async (itemId, size, quantity) => {
