@@ -16,7 +16,12 @@ connectCloudinary();
 
 // middleware
 app.use(express.json());
-app.use(cors());
+
+app.use(cors({
+  origin: "https://stylewave360.vercel.app",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
 // api
 app.use("/api/product", productRouter);
