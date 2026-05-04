@@ -18,13 +18,13 @@ connectCloudinary();
 app.use(express.json());
 
 app.use(cors({
-  origin:[ "http://localhost:5174",
-    "http://localhost:5173", 
+  origin:[
+   "https://stylewave360-admin.vercel.app",
   "https://stylewave360.vercel.app",],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
-
+app.options("*", cors());
 // api
 app.use("/api/product", productRouter);
 app.use("/api/user", userRouter);
