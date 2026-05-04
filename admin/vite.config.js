@@ -5,9 +5,15 @@ import path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
+
+   base: "/",  
   plugins: [
     react(),
     tailwindcss()
+  ],
+  "routes": [
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "/(.*)", "dest": "/" }
   ],
 
   resolve: {
@@ -18,5 +24,10 @@ export default defineConfig({
 
   server: {
     port: 5174
-  }
-})
+  },
+
+   build: {
+    outDir: "dist",
+    sourcemap: false
+   }
+});
