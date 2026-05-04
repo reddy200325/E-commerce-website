@@ -15,16 +15,20 @@ connectDB();
 connectCloudinary();
 
 // middleware
-app.use(express.json());
 
-app.use(cors({
-  origin:[
-   "https://stylewave360-admin.vercel.app",
-  "https://stylewave360.vercel.app",],
-  methods: ["GET", "POST", "PUT", "DELETE"],
+app.use(cors(corsOptions));
+const corsOptions = {
+  origin: [
+    "https://stylewave360-admin.vercel.app",
+    "https://stylewave360.vercel.app"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true
-}));
-app.options("*", cors());
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
+app.use(express.json());
 // api
 app.use("/api/product", productRouter);
 app.use("/api/user", userRouter);
