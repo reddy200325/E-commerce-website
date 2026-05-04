@@ -3,17 +3,12 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from "path";
 
-// https://vite.dev/config/
 export default defineConfig({
+  base: "/",
 
-   base: "/",  
   plugins: [
     react(),
     tailwindcss()
-  ],
-  "routes": [
-    { "src": "/assets/(.*)", "dest": "/assets/$1" },
-    { "src": "/(.*)", "dest": "/" }
   ],
 
   resolve: {
@@ -26,8 +21,8 @@ export default defineConfig({
     port: 5174
   },
 
-   build: {
+  build: {
     outDir: "dist",
     sourcemap: false
-   }
+  }
 });
