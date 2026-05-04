@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Sidebar from './components/sidebar/sidebar.jsx';
+import Sidebar from './components/sidebar/Sidebar.jsx';
 import Add from './Pages/Add/Add.jsx';
-import List from './Pages/list/list.jsx';
+import List from './Pages/List/list.jsx';
 import Order from './Pages/Order/Order.jsx';
 import Login from './components/Login/Login.jsx';
 import { ToastContainer } from 'react-toastify';
