@@ -6,6 +6,7 @@ import List from './Pages/List/list.jsx';
 import Order from './Pages/Order/Order.jsx';
 import Login from './components/Login/Login.jsx';
 import { ToastContainer } from 'react-toastify';
+import Home from "./Pages/Home.jsx";
 import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
 
@@ -35,13 +36,14 @@ const App = () => {
           {/* Page Content */}
           <div className="flex-1 p-4 md:p-6 overflow-y-auto">
             <Routes>
+              <Route path="/" element={<Home />} />
               <Route path="/add" element={<Add token={token} />} />
               <Route path="/list" element={<List token={token} />} />
               <Route path="/order" element={<Order token={token} />} />
             </Routes>
           </div>
-        </div>
-      )}
+      </div>
+       )}
     </div>
   );
 };

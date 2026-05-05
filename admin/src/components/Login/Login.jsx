@@ -2,12 +2,13 @@ import React from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { backendurl } from '@/App';
+import { IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
 
 const Login = ({ setToken }) => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [showPassword, setShowPassword] = React.useState(false); // 👈 NEW
 
-  // Handle admin login request
   const OnSubmitHandler = async (e) => {
     e.preventDefault();
     try {
@@ -29,27 +30,54 @@ const Login = ({ setToken }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600">
-      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-sm animate-fadeIn">
+      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-sm">
         <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
           Admin Panel
         </h2>
 
         <form onSubmit={OnSubmitHandler}>
+          {/* Email */}
           <div className="mb-4">
             <p className="text-sm text-gray-600 mb-1">Email Address</p>
-            <input type="email" placeholder="Enter Email" required value={email} onChange={(e) => setEmail(e.target.value)}
-             className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
+            <input
+              type="email"
+              placeholder="Enter Email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
 
-          <div className="mb-5">
+          {/* Password */}
+          <div className="mb-5 relative">
             <p className="text-sm text-gray-600 mb-1">Password</p>
-            <input type="password" placeholder="Enter password"  required  value={password} onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
+
+            <input
+              type={showPassword ? "text" : "password"} // 👈 toggle
+              placeholder="Enter password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-400"
             />
+
+            {/* Eye Icon */}
+            <span
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-[38px] cursor-pointer text-gray-500"
+            >
+              {showPassword ? (
+                <IoEyeOffOutline size={20} />
+              ) : (
+                <IoEyeOutline size={20} />
+              )}
+            </span>
           </div>
 
-          <button type="submit"
+          {/* Button */}
+          <button
+            type="submit"
             className="w-full py-2 rounded-lg bg-indigo-500 text-white font-medium hover:bg-indigo-600 active:scale-95 transition"
           >
             Login
