@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import dns from "dns";
 import "dotenv/config";
 import connectDB from "./config/MongoDB.js";
 import connectCloudinary from "./config/cloudinary.js";
@@ -10,7 +11,7 @@ import { orderRouter } from "./routes/orderRoute.js";
 
 const app = express();
 const port = process.env.PORT || 5000;
-
+dns.setDefaultResultOrder("ipv4first");
 connectDB();
 connectCloudinary();
  
