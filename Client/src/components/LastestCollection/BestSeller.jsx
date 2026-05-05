@@ -11,7 +11,6 @@ const BestSeller = () => {
         setBestSeller(bestProduct.slice(0, 4))
     }, [products])
 
-    
     if (bestSeller.length === 0) return null
 
     return (
@@ -29,16 +28,18 @@ const BestSeller = () => {
                 {bestSeller.map((product) => (
                     <div
                         key={product._id}
-                        className="bg-white rounded-lg shadow hover:shadow-lg transition duration-300 overflow-hidden"
+                        className="bg-white rounded-lg shadow hover:shadow-lg transition duration-300 overflow-hidden group"
                     >
 
                         {/* IMAGE */}
                         <Link to={`/product/${product._id}`}>
-                            <img
-                                src={product.image[0]}
-                                alt={product.name}
-                                className="w-full h-60 object-cover hover:scale-105 transition duration-300"
-                            />
+                            <div className="w-full h-60 overflow-hidden">
+                                <img
+                                    src={product.image[0]}
+                                    alt={product.name}
+                                    className="w-full h-full object-cover transform transition duration-500 group-hover:scale-110"
+                                />
+                            </div>
                         </Link>
 
                         {/* INFO */}
@@ -48,7 +49,7 @@ const BestSeller = () => {
                             </h3>
 
                             <p className="mt-2 font-semibold text-lg">
-                                ${product.price}
+                                ₹{product.price}
                             </p>
                         </div>
 

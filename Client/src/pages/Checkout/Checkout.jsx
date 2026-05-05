@@ -162,9 +162,8 @@ const Checkout = () => {
           <button
             type="button"
             onClick={() => setMethod("stripe")}
-            className={`px-6 py-2 rounded-md border ${
-              method === "stripe" ? "bg-orange-500 text-white" : "bg-white"
-            }`}
+            className={`px-6 py-2 rounded-md border ${method === "stripe" ? "bg-orange-500 text-white" : "bg-white"
+              }`}
           >
             <img src={stripe} alt="stripe" className="h-5" />
           </button>
@@ -172,9 +171,8 @@ const Checkout = () => {
           <button
             type="button"
             onClick={() => setMethod("razorpay")}
-            className={`px-6 py-2 rounded-md border ${
-              method === "razorpay" ? "bg-orange-500 text-white" : "bg-white"
-            }`}
+            className={`px-6 py-2 rounded-md border ${method === "razorpay" ? "bg-orange-500 text-white" : "bg-white"
+              }`}
           >
             <img src={razorpay} alt="razorpay" className="h-5" />
           </button>
@@ -182,9 +180,8 @@ const Checkout = () => {
           <button
             type="button"
             onClick={() => setMethod("cod")}
-            className={`px-6 py-2 rounded-md border ${
-              method === "cod" ? "bg-orange-500 text-white" : "bg-white"
-            }`}
+            className={`px-6 py-2 rounded-md border ${method === "cod" ? "bg-orange-500 text-white" : "bg-white"
+              }`}
           >
             COD
           </button>
@@ -197,9 +194,9 @@ const Checkout = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input name="firstName" placeholder="First Name" onChange={onChangeHandler} required className="border p-3 rounded-md" />
         <input name="lastName" placeholder="Last Name" onChange={onChangeHandler} required className="border p-3 rounded-md" />
-        <input name="email" placeholder="Email Address" onChange={onChangeHandler} required className="col-span-2 border p-3 rounded-md" />
-        <input name="phone" placeholder="Phone Number" onChange={onChangeHandler} required className="col-span-2 border p-3 rounded-md" />
-        <input name="street" placeholder="Street Address" onChange={onChangeHandler} required className="col-span-2 border p-3 rounded-md" />
+        <input name="email" placeholder="Email Address" onChange={onChangeHandler} required className="md:col-span-2 border p-3 rounded-md" />
+        <input name="phone" placeholder="Phone Number" onChange={onChangeHandler} required className="md:col-span-2 border p-3 rounded-md" />
+        <input name="street" placeholder="Street Address" onChange={onChangeHandler} required className="md:col-span-2 border p-3 rounded-md" />
         <input name="city" placeholder="City" onChange={onChangeHandler} required className="border p-3 rounded-md" />
         <input name="state" placeholder="State" onChange={onChangeHandler} required className="border p-3 rounded-md" />
         <input name="zipcode" placeholder="Zipcode" onChange={onChangeHandler} required className="border p-3 rounded-md" />

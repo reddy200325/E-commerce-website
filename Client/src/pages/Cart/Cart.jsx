@@ -25,11 +25,14 @@ const Cart = () => {
   }, [cartItems, products]);
 
   return (
-    <div className="w-full flex justify-center py-8">
-      <div className="w-full max-w-6xl px-4 md:px-6">
+    <div className="w-full min-h-screen bg-gray-50 py-6 flex justify-center">
+      <div className="w-full max-w-5xl px-3">
 
-        {/* Cart items */}
-        <div className="flex flex-col gap-4">
+        {/* Title */}
+        <h2 className="text-xl font-semibold mb-4">Your Cart</h2>
+
+        {/* Cart Items */}
+        <div className="flex flex-col gap-3">
           {cartData.map((item, index) => {
             const productData = products.find(p => p._id === item._id);
             if (!productData) return null;
@@ -37,79 +40,107 @@ const Cart = () => {
             return (
               <div
                 key={index}
-                className="grid grid-cols-1 md:grid-cols-3 items-center gap-4 border-b py-4"
+                className="bg-white rounded-xl shadow-sm px-3 py-2 flex items-center justify-between gap-3 hover:shadow-md transition"
               >
-                {/* Product info */}
-                <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 flex items-center justify-center bg-white border rounded">
-                    <img
-                      src={productData.image[0]}
-                      alt=""
-                      className="max-w-full max-h-full object-contain"
-                    />
-                  </div>
 
-                  <div>
-                    <p className="text-base md:text-lg font-medium">
+                {/* LEFT */}
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+
+                  {/* Image */}
+                  <img
+                    src={productData.image[0]}
+                    alt=""
+                    className="w-14 h-14 object-contain rounded-md border bg-gray-50 p-1"
+                  />
+
+                  {/* Info */}
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-gray-800 truncate">
                       {productData.name}
                     </p>
 
-                    <div className="flex items-center gap-3 mt-2">
-                      <p className="text-orange-600 font-semibold">
+                    <div className="flex items-center gap-2 text-xs mt-1">
+                      <span className="text-orange-500 font-semibold">
                         {currency}{productData.price}
-                      </p>
+                      </span>
 
-                      <span className="px-2 py-1 text-xs md:text-sm bg-gray-100 border rounded">
+                      <span className="px-1.5 py-0.5 bg-gray-100 border rounded">
                         {item.size}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Quantity */}
-                <div className="flex justify-start md:justify-center">
-                  <input
-                    type="number"
-                    min={1}
-                    value={item.quantity}
-                    onChange={(e) =>
-                      !e.target.value || e.target.value == 0
-                        ? null
-                        : updateQuantity(item._id, item.size, Number(e.target.value))
-                    }
-                    className="w-16 h-10 border rounded text-center outline-none focus:ring-2 focus:ring-orange-400"
-                  />
-                </div>
+                {/* RIGHT */}
+                <div className="flex items-center gap-2">
 
-                {/* Remove item */}
-                <div className="flex justify-start md:justify-end">
-                  <MdDelete
+                  {/* Quantity */}
+                  <div className="flex items-center bg-gray-100 rounded-full px-1">
+
+                    <button
+                      onClick={() => {
+                        if (item.quantity > 1) {
+                          updateQuantity(item._id, item.size, item.quantity - 1);
+                        }
+                      }}
+                      className={`w-7 h-7 flex items-center justify-center text-sm rounded-full 
+                        ${item.quantity === 1
+                          ? "text-gray-300 cursor-not-allowed"
+                          : "hover:bg-gray-200"}
+                        `}
+                    >
+                      -
+                    </button>
+
+                    <span className="w-6 text-center text-sm font-medium">
+                      {item.quantity}
+                    </span>
+
+                    <button
+                      onClick={() =>
+                        updateQuantity(item._id, item.size, item.quantity + 1)
+                      }
+                      className="w-7 h-7 flex items-center justify-center text-sm rounded-full hover:bg-gray-200"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  {/* Delete */}
+                  <button
                     onClick={() => updateQuantity(item._id, item.size, 0)}
-                    className="text-2xl cursor-pointer text-red-500 hover:scale-110 transition"
-                  />
+                    className="w-8 h-8 flex items-center justify-center rounded-full bg-red-100 hover:bg-red-200"
+                  >
+                    <MdDelete className="text-red-500 text-lg" />
+                  </button>
+
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* Checkout section */}
-        <div className="mt-10 flex flex-col lg:flex-row gap-8">
-          <div className="w-full lg:w-2/3 bg-white border rounded-xl shadow-md p-6 md:p-8">
+        {/* Bottom Section */}
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+          {/* Checkout */}
+          <div className="lg:col-span-2 bg-white rounded-xl shadow-md p-5">
             <Checkout />
           </div>
 
-          <div className="w-full lg:w-1/3 border rounded-lg shadow-sm p-5 bg-white h-fit">
+          {/* Summary */}
+          <div className="bg-white rounded-xl shadow-md p-5 h-fit">
             <CartTotal />
 
             <button
               type="submit"
               form="checkout-form"
-              className="w-full mt-6 bg-black text-white py-3 rounded hover:bg-gray-800 transition"
+              className="w-full mt-5 bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition"
             >
               PLACE ORDER
             </button>
           </div>
+
         </div>
 
       </div>

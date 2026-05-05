@@ -5,7 +5,7 @@ import { FaCentos } from "react-icons/fa"
 import { ShopContext } from '../context/ShopContext'
 
 const Navbar = () => {
-    const { updateSearchTerm, getCartCount, token, setToken } = useContext(ShopContext)
+    const { updateSearchTerm, getCartCount, token, setToken, clearCart } = useContext(ShopContext)
 
     const navigate = useNavigate()
 
@@ -13,6 +13,8 @@ const Navbar = () => {
         navigate("/login")
         localStorage.removeItem("token")
         setToken("")
+        clearCart()
+        navigate("/login")
     }
 
     const [loading, setLoading] = useState(false)

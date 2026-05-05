@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
 
 export const backendurl = import.meta.env.VITE_BACKEND_URL;
-export const currency = "$";
+export const currency = "₹";
 
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
@@ -42,8 +42,8 @@ const App = () => {
               <Route path="/order" element={<Order token={token} />} />
             </Routes>
           </div>
-      </div>
-       )}
+     </div>
+      )}
     </div>
   );
 };

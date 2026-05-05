@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaFacebook, FaInstagram, FaYoutube } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -42,10 +43,39 @@ const Footer = () => {
 
         {/* Links */}
         <ul className="flex flex-wrap justify-center md:justify-end gap-4 text-sm md:text-base">
-          <li className="cursor-pointer hover:text-orange-400 transition">Home</li>
-          <li className="cursor-pointer hover:text-orange-400 transition">Service</li>
-          <li className="cursor-pointer hover:text-orange-400 transition">About Us</li>
-          <li className="cursor-pointer hover:text-orange-400 transition">Privacy policy</li>
+
+          {/* Home with scroll fix */}
+          <li>
+            <Link
+              to="/"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="hover:text-orange-400 transition"
+            >
+              Home
+            </Link>
+          </li>
+
+          <li className="cursor-pointer hover:text-orange-400 transition">
+            <Link to="/service"
+              onClick={() => window.scrollTo(0, 0)} className="hover:text-orange-400">
+              Service
+            </Link>
+          </li>
+
+          <li className="cursor-pointer hover:text-orange-400 transition">
+            <Link to="/about"
+              onClick={() => window.scrollTo(0, 0)} className="hover:text-orange-400">
+              About Us
+            </Link>
+          </li>
+
+          <li className="cursor-pointer hover:text-orange-400 transition">
+            <Link to="/privacy"
+              onClick={() => window.scrollTo(0, 0)} className="hover:text-orange-400">
+              Privacy Policy
+            </Link>
+          </li>
+
         </ul>
 
       </div>

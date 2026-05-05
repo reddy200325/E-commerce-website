@@ -3,7 +3,7 @@ import userModel from "../models/userModels.js";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-const currency = "usd";
+const currency = "Rupees";
 const deliveryCharge = 12;
 
 // ================= GET ALL ORDERS (ADMIN) =================

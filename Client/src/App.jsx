@@ -10,6 +10,10 @@ import Footer from './components/Footer/Footer';
 import { ToastContainer } from "react-toastify";
 import Checkout from './pages/Checkout/Checkout';
 import Order from './pages/Order/Order';
+import PrivacyPolicy from './components/Footer/PrivacyPolicy.jsx';
+import AboutUs from './components/Footer/AboutUs.jsx';
+import Service from './components/Footer/Service.jsx';
+
 
 export const backendurl = import.meta.env.VITE_BACKEND_URL;
 
@@ -25,9 +29,12 @@ const App = () => {
         {/* Category & product routes */}
         <Route path="/category/:category" element={<Collection />} />
         <Route path="/category/:category/product/:productId" element={<ProductDetails />} />
-        <Route path="/product/:productId" element={<ProductDetails />}/>
+        <Route path="/product/:productId" element={<ProductDetails />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/orders" element={<Order />} />
+        <Route path="/service" element={<Service />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
       </Routes>
       <Footer />
     </div>

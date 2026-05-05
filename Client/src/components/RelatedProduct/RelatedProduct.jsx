@@ -56,7 +56,7 @@ const RelatedProduct = ({ category }) => {
                                 </h3>
 
                                 <p className="mt-2 font-semibold text-lg">
-                                    ${product.price}
+                                    ₹{product.price}
                                 </p>
                             </div>
 
