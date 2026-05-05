@@ -61,7 +61,7 @@ const Navbar = () => {
                     {/* LOGO */}
                     <Link to="/" className="shrink-0">
                         <h2 className="text-xl md:text-2xl font-extrabold text-orange-500">
-                            StyleWave
+                            StyleWave360
                         </h2>
                     </Link>
 

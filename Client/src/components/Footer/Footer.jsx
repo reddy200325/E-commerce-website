@@ -52,7 +52,7 @@ const Footer = () => {
 
       {/* Copyright */}
       <p className="text-center text-xs md:text-sm text-gray-500">
-        © 2026 stylewave. All rights reserved
+        © 2026 StyleWave360. All rights reserved
       </p>
 
     </footer>
