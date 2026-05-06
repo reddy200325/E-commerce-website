@@ -13,6 +13,9 @@ import Order from './pages/Order/Order';
 import PrivacyPolicy from './components/Footer/PrivacyPolicy.jsx';
 import AboutUs from './components/Footer/AboutUs.jsx';
 import Service from './components/Footer/Service.jsx';
+import GoogleSuccess from "./pages/GoogleSuccess";
+import Verify from './pages/Payment/Verify.jsx';
+
 
 
 export const backendurl = import.meta.env.VITE_BACKEND_URL;
@@ -23,6 +26,7 @@ const App = () => {
       <ToastContainer />
       <Navbar />
       <Routes>
+        <Route path="/google-success" element={<GoogleSuccess />} />
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/cart" element={<Cart />} />
@@ -35,6 +39,7 @@ const App = () => {
         <Route path="/service" element={<Service />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/verify" element={<Verify />} />
       </Routes>
       <Footer />
     </div>
