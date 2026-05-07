@@ -10,10 +10,18 @@ const Collection = () => {
   const { category } = useParams();
 
   // Filter products by category and search term
-  const filteredProduct = products.filter((product) =>
-    product.category.toLowerCase() === category.toLowerCase() &&
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProduct = products.filter((product) => {
+
+  const matchesCategory = category
+    ? product.category.toLowerCase() === category.toLowerCase()
+    : true;
+
+  const matchesSearch = product.name
+    .toLowerCase()
+    .includes(searchTerm.toLowerCase());
+
+  return matchesCategory && matchesSearch;
+});
 
   const bannerImage = {
     Men: men_wear,
@@ -24,6 +32,7 @@ const Collection = () => {
   return (
     <section className="w-full">
       {/* Banner */}
+      {!searchTerm && (
       <div className="relative w-full h-[350px] md:h-[500px] overflow-hidden">
         {bannerImage[category] ? (
           <img
@@ -47,6 +56,7 @@ const Collection = () => {
           </p>
         </div>
       </div>
+      )}
 
       {/* Content */}
       <div className="w-full flex justify-center py-10">

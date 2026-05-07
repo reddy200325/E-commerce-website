@@ -10,7 +10,6 @@ const Navbar = () => {
     const navigate = useNavigate()
 
     const logout = () => {
-        navigate("/login")
         localStorage.removeItem("token")
         setToken("")
         clearCart()
@@ -31,8 +30,8 @@ const Navbar = () => {
         setMenuOpen(false)
     }
 
-    const handleSearch = () => {
-        updateSearchTerm(searchInput)
+    const handleSearch = (value) => {
+        updateSearchTerm(value)
     }
 
     useEffect(() => {
@@ -73,12 +72,15 @@ const Navbar = () => {
                             <input
                                 type="text"
                                 value={searchInput}
-                                onChange={(e) => setSearchInput(e.target.value)}
+                                onChange={(e) => {
+                                    setSearchInput(e.target.value)
+                                    handleSearch(e.target.value)
+                                }}
                                 placeholder="Search products..."
                                 className="w-full px-4 py-2 text-sm outline-none"
                             />
                             <button
-                                onClick={handleSearch}
+                                onClick={() => handleSearch(searchInput)}
                                 className="bg-orange-500 hover:bg-orange-600 text-white px-5 text-sm"
                             >
                                 Search
@@ -90,18 +92,16 @@ const Navbar = () => {
                     <div className="flex items-center gap-4 md:gap-5">
 
                         {/* PROFILE */}
-                        <div className="flex items-center gap-4 md:gap-5">
+                        <div className="relative" ref={profileRef}>
+                            <BiUser
+                                className="text-xl md:text-2xl cursor-pointer hover:text-orange-500 transition"
+                                onClick={() => setProfileOpen(!profileOpen)}
+                            />
 
-                            {/* PROFILE */}
-                            <div className="relative" ref={profileRef}>
-                                <BiUser
-                                    className="text-xl md:text-2xl cursor-pointer hover:text-orange-500 transition"
-                                    onClick={() => setProfileOpen(!profileOpen)}
-                                />
+                            {profileOpen && (
+                                <div className="absolute right-0 mt-3 w-40 bg-white shadow-lg rounded-lg overflow-hidden border text-sm">
 
-                                {profileOpen && (
-                                    <div className="absolute right-0 mt-3 w-40 bg-white shadow-lg rounded-lg overflow-hidden border text-sm">
-
+                                    {!token ? (
                                         <Link
                                             to="/login"
                                             onClick={() => setProfileOpen(false)}
@@ -109,31 +109,42 @@ const Navbar = () => {
                                         >
                                             Login/SignUp
                                         </Link>
+                                    ) : (
+                                        <>
+                                            <Link
+                                                to="/profile"
+                                                onClick={() => setProfileOpen(false)}
+                                                className="block px-4 py-2 hover:bg-orange-50"
+                                            >
+                                                Profile
+                                            </Link>
 
-                                        <Link
-                                            to="/orders"
-                                            onClick={() => setProfileOpen(false)}
-                                            className="block px-4 py-2 hover:bg-orange-50"
-                                        >
-                                            Order
-                                        </Link>
+                                            <Link
+                                                to="/orders"
+                                                onClick={() => setProfileOpen(false)}
+                                                className="block px-4 py-2 hover:bg-orange-50"
+                                            >
+                                                Order
+                                            </Link>
 
-                                        <button
-                                            className="w-full text-left px-4 py-2 hover:bg-orange-50"
-                                            onClick={() => {
-                                                logout();
-                                                setProfileOpen(false);
-                                            }}
-                                        >
-                                            Logout
-                                        </button>
+                                            <button
+                                                className="w-full text-left px-4 py-2 hover:bg-orange-50"
+                                                onClick={() => {
+                                                    logout()
+                                                    setProfileOpen(false)
+                                                }}
+                                            >
+                                                Logout
+                                            </button>
+                                        </>
+                                    )}
 
-                                    </div>
-                                )}
-                            </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* CART */}
+                        {token && (
                         <div
                             className="relative cursor-pointer"
                             onClick={() => handleNavigation("/cart")}
@@ -145,6 +156,7 @@ const Navbar = () => {
                                 </span>
                             )}
                         </div>
+                        )}
 
                         {/* MENU ICON (MOBILE) */}
                         <div
@@ -163,12 +175,15 @@ const Navbar = () => {
                         <input
                             type="text"
                             value={searchInput}
-                            onChange={(e) => setSearchInput(e.target.value)}
+                            onChange={(e) => {
+                                setSearchInput(e.target.value)
+                                handleSearch(e.target.value)
+                            }}
                             placeholder="Search..."
                             className="w-full px-3 py-2 text-sm outline-none"
                         />
                         <button
-                            onClick={handleSearch}
+                            onClick={() => handleSearch(searchInput)}
                             className="bg-orange-500 text-white px-4 text-sm"
                         >
                             Go
@@ -179,19 +194,22 @@ const Navbar = () => {
                 {/* BOTTOM MENU */}
                 <div className={`${menuOpen ? "flex" : "hidden"} md:flex flex-col md:flex-row items-center justify-center gap-5 md:gap-8 py-3 border-t text-sm md:text-base`}>
 
-                    <button onClick={() => handleNavigation("/category/Men")}
+                    <button
+                        onClick={() => handleNavigation("/category/Men")}
                         className="hover:text-orange-500 font-medium transition"
                     >
                         Men
                     </button>
 
-                    <button onClick={() => handleNavigation("/category/Women")}
+                    <button
+                        onClick={() => handleNavigation("/category/Women")}
                         className="hover:text-orange-500 font-medium transition"
                     >
                         Women
                     </button>
 
-                    <button onClick={() => handleNavigation("/category/Kids")}
+                    <button
+                        onClick={() => handleNavigation("/category/Kids")}
                         className="hover:text-orange-500 font-medium transition"
                     >
                         Kids
