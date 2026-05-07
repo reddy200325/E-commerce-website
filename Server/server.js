@@ -10,12 +10,12 @@ import productRouter from "./routes/productRoutes.js";
 import cartRouter from "./routes/cartRoute.js";
 import { orderRouter } from "./routes/orderRoute.js";
 import googleAuthRoutes from "./routes/googleRoute.js";
-
+import path from "path";
 import "./config/passport.js";
 
 const app = express();
 const port = process.env.PORT || 5000;
-
+app.use("/uploads", express.static("uploads"));
 connectDB();
 connectCloudinary();
 const corsOptions = {

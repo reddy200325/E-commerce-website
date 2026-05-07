@@ -26,7 +26,7 @@ const HomeCollection = () => {
     }, [products, searchTerm])
 
     return (
-        <section className="px-4 md:px-10 py-6">
+        <section id="home-collection" className="px-4 md:px-10 py-6">
 
             {/* Header */}
             <div className="mb-8 text-center">

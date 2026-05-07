@@ -39,7 +39,7 @@ const RelatedProduct = ({ category }) => {
                         >
 
                             {/* ✅ IMAGE (FULL VISIBLE) */}
-                            <Link to={`/product/${product._id}`}>
+                            <Link to={`/product/₹{product._id}`}>
                                 <div className="w-full h-60 flex items-center justify-center bg-white">
                                     <img
                                         src={product.image[0]}

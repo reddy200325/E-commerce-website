@@ -131,13 +131,21 @@ const Orders = () => {
             <select
               value={order.status}
               onChange={(event) => statusHandler(event, order._id)}
-              className="w-full p-3 border rounded-lg bg-white text-gray-700 outline-none focus:ring-2 focus:ring-orange-300 cursor-pointer"
+              className={`w-full p-3 border rounded-lg outline-none cursor-pointer text-white
+    ${order.status === "Delivered"
+                  ? "bg-green-500"
+                  : order.status === "Cancelled"
+                    ? "bg-red-500"
+                    : "bg-orange-500"
+                }
+  `}
             >
               <option value="Order Placed">Order Placed</option>
               <option value="Packing">Packing</option>
               <option value="Shipping">Shipping</option>
               <option value="Out for Delivery">Out for Delivery</option>
               <option value="Delivered">Delivered</option>
+              <option value="Cancelled">Cancelled</option>
             </select>
           </div>
         ))}

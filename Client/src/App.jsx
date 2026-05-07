@@ -15,6 +15,7 @@ import AboutUs from './components/Footer/AboutUs.jsx';
 import Service from './components/Footer/Service.jsx';
 import GoogleSuccess from "./pages/GoogleSuccess";
 import Verify from './pages/Payment/Verify.jsx';
+import Profile from './pages/Login/Profile.jsx';
 
 
 
@@ -29,6 +30,7 @@ const App = () => {
         <Route path="/google-success" element={<GoogleSuccess />} />
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/cart" element={<Cart />} />
         {/* Category & product routes */}
         <Route path="/category/:category" element={<Collection />} />

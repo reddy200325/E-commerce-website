@@ -6,7 +6,12 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: false },
     cartData: { type: Object, default: {} },
-    googleId: {type: String}
+    googleId: {type: String},
+    phone: { type: String, default: "" },
+    address: { type: String, default: "" },
+    city: { type: String, default: "" },
+    pincode: { type: String, default: "" },
+    image: { type: String, default: "" },
   },
   { minimize: false }
 );

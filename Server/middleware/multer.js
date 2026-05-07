@@ -1,9 +1,20 @@
-import multer from 'multer';
+import multer from "multer";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 
-const storage = multer.diskStorage({
-    filename: (req, file, callback) => {
-        callback(null,file.originalname)
-    }
-})
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-export const upload = multer({storage})
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "profiles",
+    allowed_formats: ["jpg", "png", "jpeg"],
+  },
+});
+
+export const upload = multer({ storage });
+

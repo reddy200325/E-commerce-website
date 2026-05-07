@@ -14,7 +14,7 @@ const BestSeller = () => {
     if (bestSeller.length === 0) return null
 
     return (
-        <section className="px-4 md:px-10 py-6">
+        <section id="best-sellers" className="px-4 md:px-10 py-6">
 
             {/* Header */}
             <div className="mb-6 text-center">

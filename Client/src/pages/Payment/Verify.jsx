@@ -19,11 +19,21 @@ const Verify = () => {
       if (success === "true") {
         try {
           // 🔐 (optional but recommended)
-          await axios.post(`${backendurl}/api/order/verifyStripe`, {
-            orderId,
-          });
+          const token = localStorage.getItem("token");
 
-          await clearCart(); // ✅ ONLY HERE
+          await axios.post(
+            `${backendurl}/api/order/verifyStripe`,
+            { orderId,
+              success,
+            },
+            {
+              headers: {
+                token,
+              },
+            }
+          );
+
+          await clearCart();
           toast.success("Payment successful");
 
           navigate("/orders");

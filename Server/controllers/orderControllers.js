@@ -3,7 +3,7 @@ import userModel from "../models/userModels.js";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-const currency = "Rupees";
+const currency = "inr";
 const deliveryCharge = 12;
 
 // ================= GET ALL ORDERS (ADMIN) =================
@@ -158,5 +158,30 @@ export const updateStatus = async (req, res) => {
     res.json({ success: true, message: "Status Updated" });
   } catch (error) {
     res.json({ success: false, message: error.message });
+  }
+};
+
+export const cancelOrder = async (req, res) => {
+  try {
+    const { orderId } = req.body;
+
+    const order = await orderModel.findByIdAndUpdate(
+      orderId,
+      {
+        status: "Cancelled",
+      },
+      { new: true }
+    );
+
+    res.json({
+      success: true,
+      message: "Order Cancelled",
+      order,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error.message,
+    });
   }
 };
