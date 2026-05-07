@@ -4,11 +4,7 @@ import { toast } from "react-toastify";
 import { ShopContext } from "@/components/context/ShopContext";
 import { backendurl } from "@/App";
 import { FaCamera, FaUserEdit } from "react-icons/fa";
-import {
-  MdEmail,
-  MdLocationOn,
-  MdPhone,
-} from "react-icons/md";
+import { MdEmail } from "react-icons/md";
 
 const Profile = () => {
   const { token } = useContext(ShopContext);
@@ -26,12 +22,6 @@ const Profile = () => {
   });
 
   const [image, setImage] = useState(null);
-
-  const hasProfileData =
-    profileData.phone ||
-    profileData.address ||
-    profileData.city ||
-    profileData.pincode;
 
   const loadProfile = async () => {
     try {
@@ -54,17 +44,6 @@ const Profile = () => {
           pincode: user.pincode || "",
           image: user.image || "",
         });
-
-        if (
-          user.phone ||
-          user.address ||
-          user.city ||
-          user.pincode
-        ) {
-          setEditMode(false);
-        } else {
-          setEditMode(true);
-        }
       }
     } catch (error) {
       console.log(error);
@@ -73,6 +52,25 @@ const Profile = () => {
 
   const updateProfile = async () => {
     try {
+
+      // PHONE VALIDATION
+      if (
+        profileData.phone &&
+        profileData.phone.length !== 10
+      ) {
+        toast.error("Phone number must be exactly 10 digits");
+        return;
+      }
+
+      // PINCODE VALIDATION
+      if (
+        profileData.pincode &&
+        profileData.pincode.length !== 6
+      ) {
+        toast.error("Pincode must be exactly 6 digits");
+        return;
+      }
+
       const formData = new FormData();
 
       formData.append("name", profileData.name);
@@ -103,6 +101,7 @@ const Profile = () => {
       } else {
         toast.error(response.data.message);
       }
+
     } catch (error) {
       console.log(error);
     }
@@ -115,139 +114,89 @@ const Profile = () => {
   }, [token]);
 
   return (
-    <div className="min-h-screen bg-[#faf7f4] px-4 py-8">
+    <div className="min-h-screen bg-[#faf7f4] px-4 py-10">
 
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-md mx-auto">
 
-        <div className="grid lg:grid-cols-[320px_1fr] gap-6">
+        {/* HEADING */}
+        <div className="mb-6 text-center">
+          <h1 className="text-3xl font-bold text-gray-900">
+            My Profile
+          </h1>
 
-          {/* LEFT CARD */}
-          <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 h-fit">
+          <p className="text-gray-500 text-sm mt-2">
+            Manage your personal information
+          </p>
+        </div>
 
-            <div className="flex flex-col items-center text-center">
+        {/* CARD */}
+        <div className="bg-white rounded-[30px] p-6 shadow-lg border border-orange-100 relative overflow-hidden">
 
-              {/* IMAGE */}
-              <label className="relative group cursor-pointer">
+          {/* TOP BACKGROUND */}
+          <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-orange-400 to-orange-500"></div>
 
-                <img
-                  src={
-                    image
-                      ? URL.createObjectURL(image)
-                      : profileData.image ||
-                        "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                  }
-                  alt=""
-                  className="w-36 h-36 rounded-full object-cover border-4 border-orange-100 shadow-md"
-                />
+          {/* EDIT BUTTON */}
+          {!editMode && (
+            <button
+              onClick={() => setEditMode(true)}
+              className="absolute top-5 right-5 z-20 w-10 h-10 rounded-full bg-white shadow-md hover:scale-105 transition flex items-center justify-center text-orange-500"
+            >
+              <FaUserEdit />
+            </button>
+          )}
 
-                {editMode && (
-                  <>
-                    <div className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                      <FaCamera className="text-white text-2xl" />
-                    </div>
+          {/* PROFILE */}
+          <div className="relative z-10 flex flex-col items-center">
 
-                    <input
-                      type="file"
-                      hidden
-                      accept="image/*"
-                      onChange={(e) =>
-                        setImage(e.target.files[0])
-                      }
-                    />
-                  </>
-                )}
+            {/* IMAGE */}
+            <label className="relative group cursor-pointer mt-10">
 
-              </label>
+              <img
+                src={
+                  image
+                    ? URL.createObjectURL(image)
+                    : profileData.image ||
+                      "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                }
+                alt=""
+                className="w-36 h-36 rounded-full object-cover border-[6px] border-white shadow-xl"
+              />
 
-              {/* NAME */}
-              <h2 className="mt-5 text-2xl font-bold text-gray-900">
-                {profileData.name || "User"}
-              </h2>
+              {editMode && (
+                <>
+                  <div className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                    <FaCamera className="text-white text-2xl" />
+                  </div>
 
-              {/* EMAIL */}
-              <div className="flex items-center gap-2 mt-2 text-gray-500 text-sm">
-                <MdEmail />
-                {profileData.email}
-              </div>
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={(e) => setImage(e.target.files[0])}
+                  />
+                </>
+              )}
 
-              {/* BUTTON */}
-              <button
-                onClick={() => {
-                  if (editMode) {
-                    updateProfile();
-                  } else {
-                    setEditMode(true);
-                  }
-                }}
-                className="mt-6 w-full bg-orange-500 hover:bg-orange-600 transition text-white py-3 rounded-2xl text-sm font-medium shadow-md flex items-center justify-center gap-2"
-              >
-                <FaUserEdit />
-                {hasProfileData
-                  ? editMode
-                    ? "Save Profile"
-                    : "Edit Profile"
-                  : "Save Profile"}
-              </button>
+            </label>
 
-            </div>
+            {/* NAME */}
+            <h2 className="mt-5 text-2xl font-bold text-gray-900">
+              {profileData.name || "User"}
+            </h2>
 
-            {/* QUICK INFO */}
-            <div className="mt-8 space-y-4">
-
-              <div className="flex items-center gap-3 bg-orange-50 rounded-2xl p-3">
-                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-orange-500 shadow-sm">
-                  <MdPhone />
-                </div>
-
-                <div>
-                  <p className="text-xs text-gray-500">
-                    Phone
-                  </p>
-
-                  <p className="text-sm font-medium text-gray-800">
-                    {profileData.phone || "Not added"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 bg-orange-50 rounded-2xl p-3">
-                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-orange-500 shadow-sm">
-                  <MdLocationOn />
-                </div>
-
-                <div>
-                  <p className="text-xs text-gray-500">
-                    City
-                  </p>
-
-                  <p className="text-sm font-medium text-gray-800">
-                    {profileData.city || "Not added"}
-                  </p>
-                </div>
-              </div>
-
+            {/* EMAIL */}
+            <div className="flex items-center gap-2 mt-2 text-gray-500 text-sm">
+              <MdEmail />
+              {profileData.email}
             </div>
 
           </div>
 
-          {/* RIGHT SIDE */}
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-8">
+          {/* DETAILS */}
+          <div className="mt-10 space-y-5">
 
-            <div className="mb-8">
-
-              <h1 className="text-3xl font-bold text-gray-900">
-                Personal Information
-              </h1>
-
-              <p className="text-gray-500 text-sm mt-1">
-                Manage your personal details and address
-              </p>
-
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-              {/* NAME */}
+            {/* FULL NAME */}
+            {editMode && (
               <div>
                 <label className="text-sm font-medium text-gray-600">
                   Full Name
@@ -256,7 +205,6 @@ const Profile = () => {
                 <input
                   type="text"
                   value={profileData.name || ""}
-                  readOnly={!editMode && hasProfileData}
                   onChange={(e) =>
                     setProfileData({
                       ...profileData,
@@ -266,22 +214,10 @@ const Profile = () => {
                   className="w-full mt-2 bg-[#fafafa] border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-orange-400 transition"
                 />
               </div>
+            )}
 
-              {/* EMAIL */}
-              <div>
-                <label className="text-sm font-medium text-gray-600">
-                  Email
-                </label>
-
-                <input
-                  type="email"
-                  value={profileData.email || ""}
-                  readOnly
-                  className="w-full mt-2 bg-gray-100 border border-gray-200 rounded-2xl px-4 py-3 outline-none"
-                />
-              </div>
-
-              {/* PHONE */}
+            {/* PHONE */}
+            {editMode ? (
               <div>
                 <label className="text-sm font-medium text-gray-600">
                   Phone Number
@@ -290,18 +226,38 @@ const Profile = () => {
                 <input
                   type="text"
                   value={profileData.phone || ""}
-                  readOnly={!editMode && hasProfileData}
-                  onChange={(e) =>
+                  maxLength={10}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "");
+
                     setProfileData({
                       ...profileData,
-                      phone: e.target.value,
-                    })
-                  }
+                      phone: value,
+                    });
+                  }}
                   className="w-full mt-2 bg-[#fafafa] border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-orange-400 transition"
                 />
               </div>
+            ) : (
+              <div className="flex items-center gap-4 bg-[#f5eee6] rounded-3xl p-4">
+                <div className="w-14 h-14 rounded-2xl bg-white shadow flex items-center justify-center text-orange-500 text-xl">
+                  ☎
+                </div>
 
-              {/* CITY */}
+                <div>
+                  <p className="text-gray-500 text-sm">
+                    Phone
+                  </p>
+
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    {profileData.phone || "Not added"}
+                  </h3>
+                </div>
+              </div>
+            )}
+
+            {/* CITY */}
+            {editMode ? (
               <div>
                 <label className="text-sm font-medium text-gray-600">
                   City
@@ -310,7 +266,6 @@ const Profile = () => {
                 <input
                   type="text"
                   value={profileData.city || ""}
-                  readOnly={!editMode && hasProfileData}
                   onChange={(e) =>
                     setProfileData({
                       ...profileData,
@@ -320,28 +275,63 @@ const Profile = () => {
                   className="w-full mt-2 bg-[#fafafa] border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-orange-400 transition"
                 />
               </div>
+            ) : (
+              <div className="flex items-center gap-4 bg-[#f5eee6] rounded-3xl p-4">
+                <div className="w-14 h-14 rounded-2xl bg-white shadow flex items-center justify-center text-orange-500 text-xl">
+                  📍
+                </div>
 
-              {/* ADDRESS */}
-              <div className="md:col-span-2">
+                <div>
+                  <p className="text-gray-500 text-sm">
+                    City
+                  </p>
+
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    {profileData.city || "Not added"}
+                  </h3>
+                </div>
+              </div>
+            )}
+
+            {/* ADDRESS */}
+            {editMode ? (
+              <div>
                 <label className="text-sm font-medium text-gray-600">
                   Address
                 </label>
 
                 <textarea
-                  rows="4"
+                  rows="3"
                   value={profileData.address || ""}
-                  readOnly={!editMode && hasProfileData}
                   onChange={(e) =>
                     setProfileData({
                       ...profileData,
                       address: e.target.value,
                     })
                   }
-                  className="w-full mt-2 bg-[#fafafa] border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-orange-400 resize-none transition"
+                  className="w-full mt-2 bg-[#fafafa] border border-gray-200 rounded-2xl px-4 py-3 outline-none resize-none focus:border-orange-400 transition"
                 />
               </div>
+            ) : (
+              <div className="flex items-center gap-4 bg-[#f5eee6] rounded-3xl p-4">
+                <div className="w-14 h-14 rounded-2xl bg-white shadow flex items-center justify-center text-orange-500 text-xl">
+                  🏠
+                </div>
 
-              {/* PINCODE */}
+                <div>
+                  <p className="text-gray-500 text-sm">
+                    Address
+                  </p>
+
+                  <h3 className="text-lg font-semibold text-gray-900 break-words">
+                    {profileData.address || "Not added"}
+                  </h3>
+                </div>
+              </div>
+            )}
+
+            {/* PINCODE */}
+            {editMode ? (
               <div>
                 <label className="text-sm font-medium text-gray-600">
                   Pincode
@@ -350,18 +340,45 @@ const Profile = () => {
                 <input
                   type="text"
                   value={profileData.pincode || ""}
-                  readOnly={!editMode && hasProfileData}
-                  onChange={(e) =>
+                  maxLength={6}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "");
+
                     setProfileData({
                       ...profileData,
-                      pincode: e.target.value,
-                    })
-                  }
+                      pincode: value,
+                    });
+                  }}
                   className="w-full mt-2 bg-[#fafafa] border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-orange-400 transition"
                 />
               </div>
+            ) : (
+              <div className="flex items-center gap-4 bg-[#f5eee6] rounded-3xl p-4">
+                <div className="w-14 h-14 rounded-2xl bg-white shadow flex items-center justify-center text-orange-500 text-xl">
+                  📮
+                </div>
 
-            </div>
+                <div>
+                  <p className="text-gray-500 text-sm">
+                    Pincode
+                  </p>
+
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    {profileData.pincode || "Not added"}
+                  </h3>
+                </div>
+              </div>
+            )}
+
+            {/* SAVE BUTTON */}
+            {editMode && (
+              <button
+                onClick={updateProfile}
+                className="w-full bg-orange-500 hover:bg-orange-600 transition text-white py-3 rounded-2xl text-sm font-semibold shadow-lg"
+              >
+                Save Profile
+              </button>
+            )}
 
           </div>
 
