@@ -20,7 +20,7 @@ import Profile from './pages/Login/Profile.jsx';
 
 
 export const backendurl = import.meta.env.VITE_BACKEND_URL;
-
+console.log(backendurl)
 const App = () => {
   return (
     <div>
