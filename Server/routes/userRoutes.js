@@ -14,7 +14,7 @@ import {
 } from "../controllers/profileController.js";
 
 import { authUser } from '../middleware/auth.js'
-import { upload } from '../middleware/multer.js';
+import upload from '../middleware/multer.js';
 
 const userRouter = express.Router();
 

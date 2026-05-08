@@ -1,4 +1,5 @@
 import userModel from "../models/userModels.js";
+import cloudinary from "../config/cloudinary.js";
 
 export const getProfile = async (req, res) => {
   try {
@@ -35,8 +36,13 @@ export const updateProfile = async (req, res) => {
       pincode,
     };
 
+    
     if (req.file) {
-      updatedData.image = req.file.path;
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "profiles",
+      });
+
+      updatedData.image = result.secure_url;
     }
 
     await userModel.findByIdAndUpdate(
