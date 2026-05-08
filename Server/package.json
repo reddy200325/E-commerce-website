@@ -6,10 +6,15 @@
   "author": "",
   "type": "module",
   "main": "index.js",
+    "engines": {
+    "node": "22.x"
+  },
+
   "scripts": {
     "start": "node server.js",
     "run": "nodemon server.js"
   },
+  
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.10.0",
